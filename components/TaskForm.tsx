@@ -90,7 +90,7 @@ export function TaskForm({ onAdd }: TaskFormProps) {
           <div className={cn(
             "flex items-center gap-2 p-1.5 rounded-2xl border transition-all duration-300",
             isExpanded 
-              ? "bg-zinc-900 border-zinc-700 ring-1 ring-zinc-700 shadow-xl" 
+              ? "bg-black border-zinc-700 ring-1 ring-zinc-700 shadow-xl" 
               : "bg-black border-zinc-800 hover:border-zinc-700"
           )}>
             <input

@@ -4,17 +4,16 @@ import { useState } from "react";
 import { Header } from "./Header";
 import { TaskForm } from "./TaskForm";
 import { TaskItem } from "./TaskItem";
+import { Analytics } from "./Analytics";
 import { useTodos } from "@/hooks/useTodos";
 import { Priority, Todo } from "@/types/todo";
 import { Plus } from "lucide-react";
-// import { v4 as uuidv4 } from "uuid"; // Removed to avoid dependency
 
-// Simple UUID generator if we don't want to install uuid package yet, 
-// strictly for a simple checklist. 
 const generateId = () => Math.random().toString(36).substring(2, 9);
 
 export function TodoApp() {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [view, setView] = useState<'list' | 'analytics'>('list');
   const { todos, addTodo, toggleTodo, deleteTodo, editTodo, updatePriority, isLoaded } = useTodos();
 
   const handlePrevDay = () => {
@@ -53,7 +52,7 @@ export function TodoApp() {
       text,
       priority,
       date: currentKey,
-      completed: false, // Default to false
+      completed: false, 
     };
     addTodo(newTodo);
   };
@@ -73,38 +72,44 @@ export function TodoApp() {
         onNext={handleNextDay}
         completedCount={completedCount}
         totalCount={totalCount}
+        view={view}
+        onToggleView={() => setView(view === 'list' ? 'analytics' : 'list')}
       />
 
       <main className="flex-1 p-6 pb-32 overflow-y-auto">
-        {sortedTodos.length === 0 ? (
-          <div className="flex h-full flex-col items-center justify-center text-gray-400 mt-20 animate-in fade-in duration-500">
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 mx-auto bg-black border border-white rounded-full flex items-center justify-center">
-                <Plus size={32} className="text-gray-500" />
-              </div>
-              <div>
-                <p className="text-xl font-medium text-gray-300">No tasks for this day</p>
-                <p className="text-sm text-gray-500 mt-2">Tap the + button below to add your first task</p>
+        {view === 'analytics' ? (
+          <Analytics todos={todos} />
+        ) : (
+          sortedTodos.length === 0 ? (
+            <div className="flex h-full flex-col items-center justify-center text-gray-400 mt-20 animate-in fade-in duration-500">
+              <div className="text-center space-y-4">
+                <div className="w-16 h-16 mx-auto bg-black border border-white rounded-full flex items-center justify-center">
+                  <Plus size={32} className="text-gray-500" />
+                </div>
+                <div>
+                  <p className="text-xl font-medium text-gray-300">No tasks for this day</p>
+                  <p className="text-sm text-gray-500 mt-2">Tap the + button below to add your first task</p>
+                </div>
               </div>
             </div>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {sortedTodos.map((todo) => (
-              <TaskItem 
-                key={todo.id} 
-                todo={todo} 
-                onToggle={toggleTodo} 
-                onDelete={deleteTodo}
-                onEdit={editTodo}
-                onUpdatePriority={updatePriority}
-              />
-            ))}
-          </div>
+          ) : (
+            <div className="space-y-2">
+              {sortedTodos.map((todo) => (
+                <TaskItem 
+                  key={todo.id} 
+                  todo={todo} 
+                  onToggle={toggleTodo} 
+                  onDelete={deleteTodo}
+                  onEdit={editTodo}
+                  onUpdatePriority={updatePriority}
+                />
+              ))}
+            </div>
+          )
         )}
       </main>
 
-      <TaskForm onAdd={handleAddTodo} />
+      {view === 'list' && <TaskForm onAdd={handleAddTodo} />}
     </div>
   );
 }

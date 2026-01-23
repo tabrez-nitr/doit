@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Todo, Priority } from "@/types/todo";
 import { PriorityBadge } from "./PriorityBadge";
-import { Trash2, Check, Pencil, X, Save, MoreHorizontal } from "lucide-react";
+import { Trash2, Check, Pencil, Save } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface TaskItemProps {
@@ -54,7 +54,7 @@ export function TaskItem({ todo, onToggle, onDelete, onEdit, onUpdatePriority }:
   return (
     // 1. Container: Pure black with subtle zinc border that lights up on hover
     <div className={cn(
-      "relative flex items-start gap-4 p-4 mb-3 rounded-xl border transition-all duration-300",
+      "relative flex items-center gap-3 p-4 mb-3 rounded-xl border transition-all duration-300 group",
       isEditing 
         ? "bg-zinc-900/50 border-zinc-700 ring-1 ring-zinc-700" 
         : "bg-black border-zinc-800 hover:border-zinc-700 hover:shadow-lg hover:shadow-black/50"
@@ -64,7 +64,7 @@ export function TaskItem({ todo, onToggle, onDelete, onEdit, onUpdatePriority }:
       <button
         onClick={() => onToggle(todo.id)}
         className={cn(
-          "mt-0.5 w-5 h-5 flex items-center justify-center rounded-md border transition-all duration-200 shrink-0",
+          "w-5 h-5 flex items-center justify-center rounded-md border transition-all duration-200 shrink-0",
           todo.completed
             ? "bg-white border-white text-black shadow-[0_0_10px_rgba(255,255,255,0.3)]" // Active: White Glow
             : "bg-transparent border-zinc-700 hover:border-zinc-500 text-transparent" // Inactive: Empty Void
@@ -73,10 +73,10 @@ export function TaskItem({ todo, onToggle, onDelete, onEdit, onUpdatePriority }:
         <Check size={12} strokeWidth={4} />
       </button>
 
-      <div className="flex-1 min-w-0 flex flex-col gap-2">
+      <div className="flex-1 min-w-0 flex flex-col gap-1">
         {isEditing ? (
           // 3. Seamless Input: Looks like text but editable
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 w-full">
             <input
               ref={inputRef}
               type="text"
@@ -97,7 +97,7 @@ export function TaskItem({ todo, onToggle, onDelete, onEdit, onUpdatePriority }:
           <div className="flex flex-col gap-1.5">
             <span
               className={cn(
-                "text-base leading-snug break-all transition-all duration-300",
+                "text-base leading-snug break-all transition-all duration-300 select-none",
                 todo.completed ? "text-zinc-600 line-through decoration-zinc-800" : "text-zinc-200"
               )}
             >
