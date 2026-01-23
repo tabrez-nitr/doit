@@ -1,0 +1,86 @@
+"use client";
+
+import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
+
+interface HeaderProps {
+  currentDate: Date;
+  onPrev: () => void;
+  onNext: () => void;
+  completedCount?: number;
+  totalCount?: number;
+}
+
+export function Header({ currentDate, onPrev, onNext, completedCount = 0, totalCount = 0 }: HeaderProps) {
+  const isToday = new Date().toDateString() === currentDate.toDateString();
+  
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric'
+    }).format(date);
+  };
+
+  const progressPercentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
+
+  return (
+    // 1. Container: Pure black with subtle bottom border
+    <header className="sticky top-0 z-10 bg-black border-b border-zinc-800 p-6 flex items-center justify-between">
+      
+      {/* Left Nav Button */}
+      <button 
+        onClick={onPrev}
+        className="group p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700 transition-all active:scale-95"
+        aria-label="Previous day"
+      >
+        <ChevronLeft size={18} className="group-hover:-translate-x-0.5 transition-transform" />
+      </button>
+      
+      {/* Center Content */}
+      <div className="flex flex-col items-center gap-2">
+        
+        {/* Date Display */}
+        <div className="flex items-center gap-2">
+           {isToday && (
+               <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-white text-black uppercase tracking-wider">
+                   Today
+               </span>
+           )}
+           <h1 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
+              {!isToday && <CalendarDays className="w-4 h-4 text-zinc-500" />}
+              {formatDate(currentDate)}
+           </h1>
+        </div>
+
+        {/* Progress Bar - Only visible if there are tasks */}
+        {totalCount > 0 ? (
+          <div className="flex items-center gap-3 animate-in fade-in slide-in-from-top-1 duration-300">
+            <span className="text-xs font-medium text-zinc-500 font-mono">
+              {Math.round(progressPercentage)}%
+            </span>
+            <div className="w-32 h-1 bg-zinc-900 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.5)] transition-all duration-500 ease-out"
+                style={{ width: `${progressPercentage}%` }}
+              />
+            </div>
+            <span className="text-xs font-medium text-zinc-500 font-mono">
+              {completedCount}/{totalCount}
+            </span>
+          </div>
+        ) : (
+           <p className="text-xs text-zinc-600 font-medium">No tasks scheduled</p>
+        )}
+      </div>
+
+      {/* Right Nav Button */}
+      <button 
+        onClick={onNext}
+        className="group p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700 transition-all active:scale-95"
+        aria-label="Next day"
+      >
+        <ChevronRight size={18} className="group-hover:translate-x-0.5 transition-transform" />
+      </button>
+    </header>
+  );
+}
