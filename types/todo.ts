@@ -5,5 +5,6 @@ export interface Todo {
   text: string;
   priority: Priority;
   date: string; // YYYY-MM-DD
+  deadline?: string; // YYYY-MM-DD
   completed: boolean;
 }

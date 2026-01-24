@@ -55,5 +55,11 @@ export function useTodos() {
     );
   };
 
-  return { todos, addTodo, toggleTodo, deleteTodo, editTodo, updatePriority, isLoaded };
+  const updateTodo = (id: string, updates: Partial<Todo>) => {
+    setTodos((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, ...updates } : t))
+    );
+  };
+
+  return { todos, addTodo, toggleTodo, deleteTodo, editTodo, updatePriority, updateTodo, isLoaded };
 }

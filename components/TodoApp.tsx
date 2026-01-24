@@ -5,6 +5,7 @@ import { Header } from "./Header";
 import { TaskForm } from "./TaskForm";
 import { TaskItem } from "./TaskItem";
 import { Analytics } from "./Analytics";
+import { DeadlineSection } from "./DeadlineSection";
 import { useTodos } from "@/hooks/useTodos";
 import { Priority, Todo } from "@/types/todo";
 import { Plus } from "lucide-react";
@@ -13,8 +14,8 @@ const generateId = () => Math.random().toString(36).substring(2, 9);
 
 export function TodoApp() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [view, setView] = useState<'list' | 'analytics'>('list');
-  const { todos, addTodo, toggleTodo, deleteTodo, editTodo, updatePriority, isLoaded } = useTodos();
+  const [view, setView] = useState<'list' | 'analytics' | 'deadlines'>('list');
+  const { todos, addTodo, toggleTodo, deleteTodo, editTodo, updatePriority, updateTodo, isLoaded } = useTodos();
 
   const handlePrevDay = () => {
     const newDate = new Date(currentDate);
@@ -57,6 +58,18 @@ export function TodoApp() {
     addTodo(newTodo);
   };
 
+  const handleAddDeadline = (text: string, priority: Priority, deadline: string) => {
+    const newTodo: Todo = {
+      id: generateId(),
+      text,
+      priority,
+      date: deadline, // You might want separate field, but for now associating with that date
+      deadline: deadline, // Tracking the deadline explicitly
+      completed: false,
+    };
+    addTodo(newTodo);
+  };
+
   if (!isLoaded) {
     return <div className="flex h-screen items-center justify-center">Loading...</div>;
   }
@@ -73,12 +86,20 @@ export function TodoApp() {
         completedCount={completedCount}
         totalCount={totalCount}
         view={view}
-        onToggleView={() => setView(view === 'list' ? 'analytics' : 'list')}
+        onToggleView={setView}
       />
 
       <main className="flex-1 p-6 pb-32 overflow-y-auto">
         {view === 'analytics' ? (
           <Analytics todos={todos} />
+        ) : view === 'deadlines' ? (
+          <DeadlineSection 
+            todos={todos} 
+            onAdd={handleAddDeadline}
+            onToggle={toggleTodo}
+            onDelete={deleteTodo}
+            onUpdate={updateTodo}
+          />
         ) : (
           sortedTodos.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center text-gray-400 mt-20 animate-in fade-in duration-500">

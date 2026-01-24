@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
+import { ChevronLeft, ChevronRight, CalendarDays, Flag } from "lucide-react";
 
 interface HeaderProps {
   currentDate: Date;
@@ -8,8 +8,8 @@ interface HeaderProps {
   onNext: () => void;
   completedCount?: number;
   totalCount?: number;
-  view: 'list' | 'analytics';
-  onToggleView: () => void;
+  view: 'list' | 'analytics' | 'deadlines';
+  onToggleView: (view: 'list' | 'analytics' | 'deadlines') => void;
 }
 
 export function Header({ currentDate, onPrev, onNext, completedCount = 0, totalCount = 0, view, onToggleView }: HeaderProps) {
@@ -32,8 +32,8 @@ export function Header({ currentDate, onPrev, onNext, completedCount = 0, totalC
         {/* Left Nav Button */}
         <button 
           onClick={onPrev}
-          disabled={view === 'analytics'}
-          className={`group p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 transition-all active:scale-95 ${view === 'analytics' ? 'opacity-0 cursor-default' : 'hover:text-white hover:border-zinc-700'}`}
+          disabled={view !== 'list'}
+          className={`group p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 transition-all active:scale-95 ${view !== 'list' ? 'opacity-0 cursor-default' : 'hover:text-white hover:border-zinc-700'}`}
           aria-label="Previous day"
         >
           <ChevronLeft size={18} className="group-hover:-translate-x-0.5 transition-transform" />
@@ -52,6 +52,8 @@ export function Header({ currentDate, onPrev, onNext, completedCount = 0, totalC
              <h1 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
                 {view === 'analytics' ? (
                   "Analytics"
+                ) : view === 'deadlines' ? (
+                  "Deadlines"
                 ) : (
                   <>
                     {!isToday && <CalendarDays className="w-4 h-4 text-zinc-500" />}
@@ -65,8 +67,8 @@ export function Header({ currentDate, onPrev, onNext, completedCount = 0, totalC
         {/* Right Nav Button */}
         <button 
           onClick={onNext}
-          disabled={view === 'analytics'}
-          className={`group p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 transition-all active:scale-95 ${view === 'analytics' ? 'opacity-0 cursor-default' : 'hover:text-white hover:border-zinc-700'}`}
+          disabled={view !== 'list'}
+          className={`group p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 transition-all active:scale-95 ${view !== 'list' ? 'opacity-0 cursor-default' : 'hover:text-white hover:border-zinc-700'}`}
           aria-label="Next day"
         >
           <ChevronRight size={18} className="group-hover:translate-x-0.5 transition-transform" />
@@ -74,12 +76,24 @@ export function Header({ currentDate, onPrev, onNext, completedCount = 0, totalC
       </div>
 
        {/* View Toggle */}
-       <div className="flex justify-center">
+       <div className="flex justify-center gap-4 text-xs font-medium text-zinc-500">
             <button
-                onClick={onToggleView}
-                className="text-xs font-medium text-zinc-500 hover:text-white transition-colors"
+                onClick={() => onToggleView('list')}
+                className={`hover:text-white transition-colors ${view === 'list' ? 'text-white underline underline-offset-4 decoration-zinc-700' : ''}`}
             >
-                {view === 'list' ? 'View Analytics' : 'Back to List'}
+                Tasks
+            </button>
+            <button
+                onClick={() => onToggleView('deadlines')}
+                className={`hover:text-white transition-colors ${view === 'deadlines' ? 'text-white underline underline-offset-4 decoration-zinc-700' : ''}`}
+            >
+                Deadlines
+            </button>
+            <button
+                onClick={() => onToggleView('analytics')}
+                className={`hover:text-white transition-colors ${view === 'analytics' ? 'text-white underline underline-offset-4 decoration-zinc-700' : ''}`}
+            >
+                Analytics
             </button>
        </div>
        
