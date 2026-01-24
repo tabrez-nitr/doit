@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DoIt",
+  title: "Do It",
   description: "Minimalist Mobile To-Do",
 };
 

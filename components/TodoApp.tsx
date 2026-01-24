@@ -9,6 +9,7 @@ import { DeadlineSection } from "./DeadlineSection";
 import { useTodos } from "@/hooks/useTodos";
 import { Priority, Todo } from "@/types/todo";
 import { Plus } from "lucide-react";
+import { useSwipeable } from "react-swipeable";
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
 
@@ -17,6 +18,43 @@ export function TodoApp() {
   const [view, setView] = useState<'list' | 'analytics' | 'deadlines'>('list');
   const { todos, addTodo, toggleTodo, deleteTodo, editTodo, updatePriority, updateTodo, isLoaded } = useTodos();
   const taskFormRef = useRef<TaskFormHandle>(null);
+
+  const VIEWS = ['list', 'analytics', 'deadlines'] as const;
+
+  const handleSwipe = (direction: 'left' | 'right') => {
+      const currentIndex = VIEWS.indexOf(view);
+      if (direction === 'left') {
+          // Next view
+          if (currentIndex < VIEWS.length - 1) {
+              setView(VIEWS[currentIndex + 1]);
+          }
+      } else {
+          // Prev view
+          if (currentIndex > 0) {
+              setView(VIEWS[currentIndex - 1]);
+          }
+      }
+  };
+
+  const handlers = useSwipeable({
+      onSwipedLeft: (eventData) => {
+        // Prevent conflict: If target is inside a scrollable container (like Heatmap) or TaskItem
+        const target = eventData.event.target as HTMLElement;
+        if (target.closest('.overflow-x-auto')) return; // Heatmap check
+        if (target.closest('.group.overflow-hidden')) return; // TaskItem check (assuming class structure)
+        
+        handleSwipe('left');
+      },
+      onSwipedRight: (eventData) => {
+        const target = eventData.event.target as HTMLElement;
+        if (target.closest('.overflow-x-auto')) return;
+        if (target.closest('.group.overflow-hidden')) return;
+        
+        handleSwipe('right');
+      },
+      preventScrollOnSwipe: false,
+      trackMouse: true
+  });
 
   const handlePrevDay = () => {
     const newDate = new Date(currentDate);
@@ -81,7 +119,10 @@ export function TodoApp() {
   const totalCount = sortedTodos.length;
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans transition-colors duration-300">
+    <div 
+        {...handlers}
+        className="min-h-screen bg-background text-foreground flex flex-col font-sans transition-colors duration-300 touch-pan-y"
+    >
       <Header 
         currentDate={currentDate} 
         onPrev={handlePrevDay} 

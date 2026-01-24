@@ -102,10 +102,10 @@ export const TaskForm = forwardRef<TaskFormHandle, TaskFormProps>(({ onAdd }, re
 
           {/* 3. Input Area */}
           <div className={cn(
-            "flex items-center gap-2 p-1.5 rounded-2xl border transition-all duration-300",
+            "flex items-center gap-2 p-1.5 rounded-2xl bg-transparent  transition-all duration-300",
             isExpanded 
               ? "bg-background border-input ring-1 ring-ring shadow-xl" 
-              : "bg-muted/50 border-transparent hover:border-input hover:bg-muted"
+              : "bg-muted/50 border-transparent  hover:bg-muted"
           )}>
             <input
               ref={inputRef}
@@ -114,7 +114,7 @@ export const TaskForm = forwardRef<TaskFormHandle, TaskFormProps>(({ onAdd }, re
               onChange={(e) => setText(e.target.value)}
               onFocus={() => setIsExpanded(true)}
               placeholder="What needs to be done?"
-              className="flex-1 bg-transparent border-none px-4 py-3 text-foreground placeholder:text-muted-foreground focus:ring-0 focus:outline-none text-base"
+              className="flex-1 bg-transparent px-4 py-3 text-foreground placeholder:text-muted-foreground focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:outline-none text-base"
               autoComplete="off"
             />
             
