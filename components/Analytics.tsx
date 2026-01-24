@@ -16,6 +16,7 @@ import { Lightbulb, Plus, CalendarClock } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { ActivityHeatmap } from "./ActivityHeatmap";
+import { DailyComparison } from "./DailyComparison";
 
 interface AnalyticsProps {
   todos: Todo[];
@@ -280,12 +281,15 @@ export function Analytics({ todos }: AnalyticsProps) {
           </div>
         </div>
 
+        {/* Daily Performance Comparison */}
+        <DailyComparison todos={todos} />
+
         {/* Month Progress Bar */}
         <div className="bg-card p-6 rounded-xl border border-border shadow-sm">
           <div className="flex justify-between items-end mb-2">
             <div className="flex items-center gap-2">
                <CalendarClock className="w-4 h-4 text-muted-foreground" />
-               <p className="text-muted-foreground text-sm">{currentMonthName} Progress</p>
+               <p className="text-muted-foreground text-sm">{currentMonthName} Over</p>
             </div>
             <p className="text-3xl font-bold text-foreground">{monthProgressFormatted}%</p>
           </div>
