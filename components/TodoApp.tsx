@@ -7,6 +7,7 @@ import { TaskItem } from "./TaskItem";
 import { Analytics } from "./Analytics";
 import { DeadlineSection } from "./DeadlineSection";
 import { useTodos } from "@/hooks/useTodos";
+import { useLocalNotifications } from "@/hooks/useLocalNotifications"; // [NEW]
 import { Priority, Todo } from "@/types/todo";
 import { Plus } from "lucide-react";
 import { useSwipeable } from "react-swipeable";
@@ -17,6 +18,7 @@ export function TodoApp() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<'list' | 'analytics' | 'deadlines'>('list');
   const { todos, addTodo, toggleTodo, deleteTodo, editTodo, updatePriority, updateTodo, isLoaded } = useTodos();
+  const { permission, requestPermission } = useLocalNotifications(todos); // [NEW]
   const taskFormRef = useRef<TaskFormHandle>(null);
 
   const VIEWS = ['analytics', 'list', 'deadlines'] as const;
@@ -135,7 +137,11 @@ export function TodoApp() {
 
       <main className="flex-1 p-6 pb-32 overflow-y-auto">
         {view === 'analytics' ? (
-          <Analytics todos={todos} />
+          <Analytics 
+             todos={todos} 
+             permission={permission} 
+             onRequestPermission={requestPermission} 
+          />
         ) : view === 'deadlines' ? (
           <DeadlineSection 
             todos={todos} 

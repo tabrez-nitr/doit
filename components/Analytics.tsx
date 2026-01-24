@@ -20,9 +20,11 @@ import { DailyComparison } from "./DailyComparison";
 
 interface AnalyticsProps {
   todos: Todo[];
+  permission: NotificationPermission;
+  onRequestPermission: () => Promise<NotificationPermission>;
 }
 
-export function Analytics({ todos }: AnalyticsProps) {
+export function Analytics({ todos, permission, onRequestPermission }: AnalyticsProps) {
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -251,6 +253,21 @@ export function Analytics({ todos }: AnalyticsProps) {
   return (
     <div className="py-6  space-y-6 animate-in fade-in duration-500 pb-32">
       <h2 className="text-2xl font-bold mb-6 text-foreground">Analytics</h2>
+       {/* Notifications Check */}
+        {permission === 'default' && (
+          <div className="bg-card border border-border p-4 rounded-xl flex items-center justify-between shadow-sm">
+             <div className="mr-4">
+               <h4 className="text-sm font-semibold text-foreground">Turn on Notifications?</h4>
+               <p className="text-xs text-muted-foreground">Get reminded when tasks are due.</p>
+             </div>
+             <button
+               onClick={onRequestPermission}
+               className="bg-primary text-primary-foreground text-xs font-medium px-3 py-2 rounded-lg hover:opacity-90 transition-opacity"
+             >
+               Enable
+             </button>
+          </div>
+        )}
 
       {/* Primary Stats Grid */}
       <div className="grid grid-cols-2 gap-4">
@@ -316,6 +333,8 @@ export function Analytics({ todos }: AnalyticsProps) {
         <div className="bg-linear-to-br from-zinc-800 to-black p-4 rounded-xl border border-zinc-700/50 shadow-md">
            <p className="text-zinc-300 italic text-sm">"{dailyQuote}"</p>
         </div>
+
+       
 
         {suggestions.map((msg, idx) => (
           <div

@@ -118,7 +118,7 @@ export const TaskForm = forwardRef<TaskFormHandle, TaskFormProps>(({ onAdd }, re
               autoComplete="off"
             />
             
-            {/* 4. Submit Button: High contrast */}
+            {/* 5. Submit Button: High contrast */}
             <button
               type="submit"
               disabled={!text.trim()}
@@ -131,6 +131,7 @@ export const TaskForm = forwardRef<TaskFormHandle, TaskFormProps>(({ onAdd }, re
             >
               <Plus size={20} strokeWidth={2.5} />
             </button>
+
           </div>
         </form>
       </div>
