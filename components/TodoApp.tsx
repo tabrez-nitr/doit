@@ -19,7 +19,7 @@ export function TodoApp() {
   const { todos, addTodo, toggleTodo, deleteTodo, editTodo, updatePriority, updateTodo, isLoaded } = useTodos();
   const taskFormRef = useRef<TaskFormHandle>(null);
 
-  const VIEWS = ['deadlines', 'list', 'analytics'] as const;
+  const VIEWS = ['analytics', 'list', 'deadlines'] as const;
 
   const handleSwipe = (direction: 'left' | 'right') => {
       const currentIndex = VIEWS.indexOf(view);
