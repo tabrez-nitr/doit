@@ -87,11 +87,13 @@ export function Header({ currentDate, onPrev, onNext, completedCount = 0, totalC
        {/* View Toggle */}
        <div className="flex justify-center gap-4 text-xs font-medium text-muted-foreground items-center">
             
+           
+            
             <button
-                onClick={() => onToggleView('deadlines')}
-                className={`hover:text-foreground transition-colors ${view === 'deadlines' ? 'text-foreground underline underline-offset-4 decoration-primary' : ''}`}
+                onClick={() => onToggleView('analytics')}
+                className={`hover:text-foreground transition-colors ${view === 'analytics' ? 'text-foreground underline underline-offset-4 decoration-primary' : ''}`}
             >
-                Deadlines
+                Analytics
             </button>
              <button
                 onClick={() => onToggleView('list')}
@@ -99,11 +101,11 @@ export function Header({ currentDate, onPrev, onNext, completedCount = 0, totalC
             >
                 Tasks
             </button>
-            <button
-                onClick={() => onToggleView('analytics')}
-                className={`hover:text-foreground transition-colors ${view === 'analytics' ? 'text-foreground underline underline-offset-4 decoration-primary' : ''}`}
+             <button
+                onClick={() => onToggleView('deadlines')}
+                className={`hover:text-foreground transition-colors ${view === 'deadlines' ? 'text-foreground underline underline-offset-4 decoration-primary' : ''}`}
             >
-                Analytics
+                Deadlines
             </button>
             
             {/* Theme Toggle */}
