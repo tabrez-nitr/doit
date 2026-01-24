@@ -9,7 +9,6 @@ import { DeadlineSection } from "./DeadlineSection";
 import { useTodos } from "@/hooks/useTodos";
 import { Priority, Todo } from "@/types/todo";
 import { Plus } from "lucide-react";
-import { useSwipeable } from "react-swipeable";
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
 
@@ -72,17 +71,7 @@ export function TodoApp() {
     addTodo(newTodo);
   };
 
-  const handlers = useSwipeable({
-    onSwipedLeft: () => {
-      if (view === 'analytics') setView('list');
-      else if (view === 'list') setView('deadlines');
-    },
-    onSwipedRight: () => {
-      if (view === 'deadlines') setView('list');
-      else if (view === 'list') setView('analytics');
-    },
-    trackMouse: true
-  });
+
 
   if (!isLoaded) {
     return <div className="flex h-screen items-center justify-center">Loading...</div>;
@@ -92,7 +81,7 @@ export function TodoApp() {
   const totalCount = sortedTodos.length;
 
   return (
-    <div {...handlers} className="min-h-screen bg-background text-foreground flex flex-col font-sans transition-colors duration-300">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans transition-colors duration-300">
       <Header 
         currentDate={currentDate} 
         onPrev={handlePrevDay} 

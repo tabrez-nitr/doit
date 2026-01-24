@@ -2,7 +2,7 @@
 
 import { Todo } from "@/types/todo";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface ActivityHeatmapProps {
@@ -12,9 +12,14 @@ interface ActivityHeatmapProps {
 export function ActivityHeatmap({ todos }: ActivityHeatmapProps) {
   const [mounted, setMounted] = useState(false);
   const { theme } = useTheme();
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
+    // Auto-scroll to the end (current month)
+    if (scrollRef.current) {
+        scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
+    }
   }, []);
 
   // 1. Generate the last 6 months grouping by month
@@ -72,7 +77,10 @@ export function ActivityHeatmap({ todos }: ActivityHeatmapProps) {
         <span className="text-xs font-normal text-muted-foreground ml-auto">Last 6 Months</span>
       </h3>
       
-      <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-muted-foreground/20">
+      <div 
+        ref={scrollRef}
+        className="flex gap-6 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-muted-foreground/20"
+      >
         {Object.entries(months).map(([monthName, dates]) => (
             <div key={monthName} className="flex flex-col gap-2 min-w-max">
                 <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{monthName}</span>
