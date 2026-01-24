@@ -12,9 +12,10 @@ import {
   PieChart,
   Pie,
 } from "recharts";
-import { Lightbulb, Plus } from "lucide-react";
+import { Lightbulb, Plus, CalendarClock } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { ActivityHeatmap } from "./ActivityHeatmap";
 
 interface AnalyticsProps {
   todos: Todo[];
@@ -41,6 +42,14 @@ export function Analytics({ todos }: AnalyticsProps) {
   const completedTasks = todos.filter((t) => t.completed).length;
   const completionRate =
     totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+  // Month Progress Calculation
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  const monthProgress = ((now.getTime() - startOfMonth.getTime()) / (endOfMonth.getTime() - startOfMonth.getTime())) * 100;
+  const monthProgressFormatted = monthProgress.toFixed(1);
+  const currentMonthName = now.toLocaleString('default', { month: 'long' });
 
   const highPriority = todos.filter((t) => t.priority === "High").length;
   const mediumPriority = todos.filter((t) => t.priority === "Medium").length;
@@ -111,99 +120,62 @@ export function Analytics({ todos }: AnalyticsProps) {
 
   // --- Daily Quote Engine ---
  const quotes = [
-  "Stay hungry, stay foolish. — Steve Jobs",
-  "The best way to predict the future is to invent it. — Alan Kay",
-  "Success is not final, failure is not fatal: it is the courage to continue that counts. — Winston Churchill",
-  "In the middle of every difficulty lies opportunity. — Albert Einstein",
-  "It does not matter how slowly you go as long as you do not stop. — Confucius",
-  "Whether you think you can or you think you can’t, you’re right. — Henry Ford",
-  "The only limit to our realization of tomorrow will be our doubts of today. — Franklin D. Roosevelt",
-  "Dream big and dare to fail. — Norman Vaughan",
-  "Don’t watch the clock; do what it does. Keep going. — Sam Levenson",
-  "You miss 100% of the shots you don’t take. — Wayne Gretzky",
-  "The secret of getting ahead is getting started. — Mark Twain",
-  "Fall seven times and stand up eight. — Japanese Proverb",
-  "Happiness depends upon ourselves. — Aristotle",
-  "He who has a why to live can bear almost any how. — Friedrich Nietzsche",
-  "Act as if what you do makes a difference. It does. — William James",
-  "Do what you can, with what you have, where you are. — Theodore Roosevelt",
-  "Everything you’ve ever wanted is on the other side of fear. — George Addair",
-  "Hardships often prepare ordinary people for an extraordinary destiny. — C.S. Lewis",
-  "Quality is not an act, it is a habit. — Aristotle",
-  "If you are going through hell, keep going. — Winston Churchill",
-  "The future belongs to those who prepare for it today. — Malcolm X",
-  "Success usually comes to those who are too busy to be looking for it. — Henry David Thoreau",
-  "What lies behind us and what lies before us are tiny matters compared to what lies within us. — Ralph Waldo Emerson",
-  "Believe you can and you’re halfway there. — Theodore Roosevelt",
-  "It always seems impossible until it’s done. — Nelson Mandela",
-  "I never dreamed about success. I worked for it. — Estée Lauder",
-  "Don’t wait. The time will never be just right. — Napoleon Hill",
-  "If opportunity doesn’t knock, build a door. — Milton Berle",
-  "Success is the sum of small efforts repeated day in and day out. — Robert Collier",
-  "Discipline is the bridge between goals and accomplishment. — Jim Rohn",
-  "The only way to do great work is to love what you do. — Steve Jobs",
-  "Small deeds done are better than great deeds planned. — Peter Marshall",
-  "Focus on being productive instead of busy. — Tim Ferriss",
-  "A person who never made a mistake never tried anything new. — Albert Einstein",
-  "You don’t have to be great to start, but you have to start to be great. — Zig Ziglar",
-  "Dreams don’t work unless you do. — John C. Maxwell",
-  "Work hard in silence, let your success be your noise. — Frank Ocean",
-  "If you get tired, learn to rest, not to quit. — Banksy",
-  "Don’t let yesterday take up too much of today. — Will Rogers",
-  "Action is the foundational key to all success. — Pablo Picasso",
-  "One day or day one. You decide. — Paulo Coelho",
-  "Do something today that your future self will thank you for. — Sean Patrick Flanery",
-  "What comes easy won’t last. What lasts won’t come easy. — Anonymous",
-  "Be stronger than your excuses. — Anonymous",
-  "Learning never exhausts the mind. — Leonardo da Vinci",
-  "Simplicity is the ultimate sophistication. — Leonardo da Vinci",
-  "The man who moves a mountain begins by carrying away small stones. — Confucius",
-  "You become what you believe. — Oprah Winfrey",
-  "Success is walking from failure to failure with no loss of enthusiasm. — Winston Churchill",
-  "If you want to shine like a sun, first burn like a sun. — A.P.J. Abdul Kalam",
-  "Arise, awake, and stop not till the goal is reached. — Swami Vivekananda",
-  "Excellence is a continuous process, not an accident. — A.P.J. Abdul Kalam",
-  "Take risks in your life. If you win, you can lead. If you lose, you can guide. — Swami Vivekananda",
-  "The journey of a thousand miles begins with one step. — Lao Tzu",
-  "Failure is simply the opportunity to begin again, this time more intelligently. — Henry Ford",
-  "Success is not final, failure is not fatal: it is the courage to continue that counts. — Winston Churchill",
-  "I have not failed. I've just found 10,000 ways that won't work. — Thomas Edison",
-  "Only those who dare to fail greatly can ever achieve greatly. — Robert F. Kennedy",
-  "Do not be embarrassed by your failures, learn from them and start again. — Richard Branson",
-  "Failure is the condiment that gives success its flavor. — Truman Capote",
-  "Mistakes are proof that you are trying. — Jennifer Lim",
-  "Our greatest glory is not in never failing, but in rising every time we fail. — Confucius",
-  "Failure should be our teacher, not our undertaker. — Zig Ziglar",
-  "You may encounter many defeats, but you must not be defeated. — Maya Angelou",
-  "It’s not how far you fall, but how high you bounce that counts. — Zig Ziglar",
-  "There is no failure except in no longer trying. — Elbert Hubbard",
-  "Failure is success in progress. — Albert Einstein",
-  "Every adversity, every failure, every heartache carries with it the seed of an equal or greater benefit. — Napoleon Hill",
-  "The only real mistake is the one from which we learn nothing. — Henry Ford",
-  "A person who never made a mistake never tried anything new. — Albert Einstein",
-  "Winners are not afraid of losing. But losers are. Failure is part of the process of success. — Robert Kiyosaki",
-  "Failure is unimportant. It takes courage to make a fool of yourself. — Charlie Chaplin",
-  "Success is stumbling from failure to failure with no loss of enthusiasm. — Winston Churchill",
-  "Pain is temporary. Quitting lasts forever. — Lance Armstrong",
-  "Failure is a bruise, not a tattoo. — Jon Sinclair",
-  "You build on failure. You use it as a stepping stone. — Johnny Cash",
-  "There are no failures — just experiences and lessons. — Oprah Winfrey",
-  "Failure is not the opposite of success; it’s part of success. — Arianna Huffington",
-  "I can accept failure. Everyone fails at something. But I can’t accept not trying. — Michael Jordan",
-  "What defines us is how well we rise after falling. — Lionel Messi",
-  "If you’re not failing every now and again, it’s a sign you’re not doing anything very innovative. — Woody Allen",
-  "Failure is the key to success; each mistake teaches us something. — Morihei Ueshiba",
-  "Rock bottom became the solid foundation on which I rebuilt my life. — J.K. Rowling",
-  "Success grows out of struggles to overcome difficulties. — A.P.J. Abdul Kalam",
-  "If you fail, never give up because FAIL means ‘First Attempt In Learning’. — A.P.J. Abdul Kalam",
-  "Take risks in your life. If you win, you can lead. If you lose, you can guide. — Swami Vivekananda",
-  "Arise, awake, and stop not till the goal is reached. — Swami Vivekananda",
-  "Doubt kills more dreams than failure ever will. — Suzy Kassem",
-  "Failure is a delay, not a defeat. — Denis Waitley",
-  "Courage doesn’t always roar. Sometimes it’s the quiet voice saying, ‘I will try again tomorrow.’ — Mary Anne Radmacher",
-  "Don’t fear failure. Fear being in the same place next year. — Anonymous",
-  "Failure is the tuition you pay for success. — Walter Brunell",
-  "What matters is not the failure, but the lesson learned from it. — Dalai Lama"
+  "Nobody is coming to save you. — Unknown",
+  "Life doesn't get easier or more forgiving, we get stronger and more resilient. — Steve Maraboli",
+  "The world is full of suffering, but it is also full of the overcoming of it. — Helen Keller (but realize most don't overcome it)",
+  "Most people die at 25 and aren't buried until 75. — Benjamin Franklin",
+  "You will never be criticized by someone who is doing more than you. You will only be criticized by someone doing less. — Denzel Washington",
+  "Hard work doesn't guarantee success, but not working guarantees failure. — Unknown",
+  "People don't change. They just become more of who they really are. — Unknown",
+  "The only thing that is constant is change, and most people hate change. — Heraclitus (adapted reality check)",
+  "Life is unfair. Get used to it. — Bill Gates",
+  "Your biggest enemy is the one in the mirror. — Unknown",
+  "No one cares about your struggles as much as you think they do. — Unknown",
+  "Time you enjoy wasting is not wasted time — but wasted time is still gone forever. — Adapted from Marthe Troly-Curtin",
+  "The graveyard is full of indispensable people. — French Proverb",
+  "You are not owed anything. Earn it or lose it. — Unknown",
+  "Comfort is the enemy of progress. — Unknown",
+  "Excuses are the nails used to build a house of failure. — Jim Rohn",
+  "Most people fail not because of lack of talent, but because of lack of persistence. — Unknown",
+  "The pain of discipline is temporary; the pain of regret lasts forever. — Unknown",
+  "What you allow is what will continue. — Unknown",
+  "People will forget what you said, people will forget what you did, but people will never forget how you made them feel — and most will use it against you later. — Adapted from Maya Angelou",
+  "Success is liking yourself, liking what you do, and liking how you do it — but the world doesn't care if you like it or not. — Maya Angelou (harsh twist)",
+  "You can have excuses or results, but not both. — Unknown",
+  "The world doesn't care about your intentions. It cares about your results. — Unknown",
+  "Everyone you meet is fighting a battle you know nothing about — and most won't tell you because it doesn't benefit them. — Adapted",
+  "Dreams don't pay bills. Action does. — Unknown",
+  "If it was easy, everyone would do it. — Unknown",
+  "Your network is your net worth — and most people have poor networks because they're lazy. — Unknown",
+  "Life isn't about finding yourself. Life is about creating yourself — or wasting away trying. — Adapted from George Bernard Shaw",
+  "The only place success comes before work is in the dictionary. — Vidal Sassoon",
+  "You reap what you sow — and sometimes you reap what others sowed if you're lucky, but luck runs out. — Unknown",
+  "Entitlement is the death of growth. — Unknown",
+  "People remember the times you helped them when they needed it least and appreciated it most — but they also remember when you didn't. — Unknown",
+  "Stop waiting for the perfect moment. It doesn't exist. — Unknown",
+  "Fear is temporary. Regret is permanent. — Unknown",
+  "You don't drown by falling in the water; you drown by staying there. — Edwin Louis Cole",
+  "The truth hurts for a little while, but lies hurt for a lifetime. — Unknown",
+  "Not everyone who smiles at you is your friend. — Unknown",
+  "Life will test you until you break or become unbreakable. Choose. — Unknown",
+  "Your potential means nothing if you don't act on it. — Unknown",
+  "The clock is ticking louder than your excuses. — Unknown",
+  "You can't change people, but you can change the people you allow in your life. — Unknown",
+  "Most of your problems are because you think life should be fair. — Unknown",
+  "Pain is inevitable. Suffering is optional. — Haruki Murakami (but most choose suffering)",
+  "What got you here won't get you there. — Marshall Goldsmith",
+  "The moment you accept responsibility for everything in your life is the moment you gain the power to change anything in your life. — Hal Elrod",
+  "Everyone wants to eat, but few are willing to hunt. — Unknown",
+  "Your life is your fault — good or bad. Own it. — Unknown",
+  "Mediocrity is a choice. — Unknown",
+  "The price of discipline is always less than the pain of regret. — Unknown",
+  "Reality doesn't care about your feelings. — Unknown",
+  "You either get busy living or get busy dying. — Stephen King (from Shawshank Redemption)",
+  "No one is coming to rescue you from your bad decisions. — Unknown",
+  "The world rewards results, not effort. — Unknown",
+  "Stop romanticizing the struggle. Sometimes it's just poor choices. — Unknown",
+  "You become what you tolerate. — Unknown",
+  "Life doesn't give you what you want. It gives you what you earn. — Unknown"
 ];
 
   const getDailyQuote = () => {
@@ -239,18 +211,40 @@ export function Analytics({ todos }: AnalyticsProps) {
       </div>
 
       {/* Completion Rate Bar */}
-      <div className="bg-card p-6 rounded-xl border border-border shadow-sm">
-        <div className="flex justify-between items-end mb-2">
-          <p className="text-muted-foreground text-sm">Completion Rate</p>
-          <p className="text-3xl font-bold text-foreground">{completionRate}%</p>
+      <div className="grid grid-cols-1 gap-4">
+        <div className="bg-card p-6 rounded-xl border border-border shadow-sm">
+          <div className="flex justify-between items-end mb-2">
+            <p className="text-muted-foreground text-sm">Completion Rate</p>
+            <p className="text-3xl font-bold text-foreground">{completionRate}%</p>
+          </div>
+          <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+            <div
+              className="h-full bg-primary transition-all duration-1000 ease-out"
+              style={{ width: `${completionRate}%` }}
+            />
+          </div>
         </div>
-        <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
-          <div
-            className="h-full bg-primary transition-all duration-1000 ease-out"
-            style={{ width: `${completionRate}%` }}
-          />
+
+        {/* Month Progress Bar */}
+        <div className="bg-card p-6 rounded-xl border border-border shadow-sm">
+          <div className="flex justify-between items-end mb-2">
+            <div className="flex items-center gap-2">
+               <CalendarClock className="w-4 h-4 text-muted-foreground" />
+               <p className="text-muted-foreground text-sm">{currentMonthName} Progress</p>
+            </div>
+            <p className="text-3xl font-bold text-foreground">{monthProgressFormatted}%</p>
+          </div>
+          <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+            <div
+              className="h-full bg-primary transition-all duration-1000 ease-out"
+              style={{ width: `${monthProgress}%` }}
+            />
+          </div>
         </div>
       </div>
+
+      {/* Activity Heatmap */}
+      <ActivityHeatmap todos={todos} />
 
       {/* Suggestions Section */}
       <div className="space-y-3">
@@ -260,7 +254,7 @@ export function Analytics({ todos }: AnalyticsProps) {
         </h3>
         
         {/* Daily Quote Card */}
-        <div className="bg-gradient-to-br from-zinc-800 to-black p-4 rounded-xl border border-zinc-700/50 shadow-md">
+        <div className="bg-linear-to-br from-zinc-800 to-black p-4 rounded-xl border border-zinc-700/50 shadow-md">
            <p className="text-zinc-300 italic text-sm">"{dailyQuote}"</p>
         </div>
 
