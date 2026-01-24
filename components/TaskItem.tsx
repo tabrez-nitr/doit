@@ -57,14 +57,9 @@ export function TaskItem({ todo, onToggle, onDelete, onEdit, onUpdatePriority }:
   const handlers = useSwipeable({
     onSwiping: (eventData: SwipeEventData) => {
         if (isEditing) return;
-        setSwipeOffset(eventData.deltaX);
-    },
-    onSwipedLeft: (eventData: SwipeEventData) => {
-        if (isEditing) return;
-        if (eventData.deltaX < -100) {
-            onDelete(todo.id);
-        } else {
-            setSwipeOffset(0);
+        // Only allow right swipe (deltaX > 0)
+        if (eventData.deltaX > 0) {
+            setSwipeOffset(eventData.deltaX);
         }
     },
     onSwipedRight: (eventData: SwipeEventData) => {
@@ -86,7 +81,6 @@ export function TaskItem({ todo, onToggle, onDelete, onEdit, onUpdatePriority }:
 
   const getSwipeBackground = () => {
       if (swipeOffset > 0) return "bg-emerald-500/20"; // Right Swipe (Complete)
-      if (swipeOffset < 0) return "bg-destructive/20"; // Left Swipe (Delete)
       return "bg-card";
   };
 
@@ -104,12 +98,6 @@ export function TaskItem({ todo, onToggle, onDelete, onEdit, onUpdatePriority }:
                  <div className="flex items-center gap-2 text-emerald-500 ml-0 mr-auto opacity-0 animate-in fade-in slide-in-from-left-4" style={{ opacity: Math.min(swipeOffset / 100, 1) }}>
                      <Check size={20} strokeWidth={3} />
                      <span className="font-bold uppercase tracking-wider text-xs">Complete</span>
-                 </div>
-             )}
-             {swipeOffset < 0 && (
-                 <div className="flex items-center gap-2 text-destructive ml-auto mr-0 opacity-0 animate-in fade-in slide-in-from-right-4" style={{ opacity: Math.min(Math.abs(swipeOffset) / 100, 1) }}>
-                     <span className="font-bold uppercase tracking-wider text-xs">Delete</span>
-                     <Trash2 size={20} strokeWidth={2.5} />
                  </div>
              )}
         </div>
