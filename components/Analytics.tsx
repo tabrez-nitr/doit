@@ -249,7 +249,7 @@ export function Analytics({ todos }: AnalyticsProps) {
   const suggestions = getSuggestions();
 
   return (
-    <div className="py-6 px-1 space-y-6 animate-in fade-in duration-500 pb-32">
+    <div className="py-6  space-y-6 animate-in fade-in duration-500 pb-32">
       <h2 className="text-2xl font-bold mb-6 text-foreground">Analytics</h2>
 
       {/* Primary Stats Grid */}

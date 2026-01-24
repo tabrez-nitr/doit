@@ -41,15 +41,15 @@ export function TodoApp() {
         // Prevent conflict: If target is inside a scrollable container (like Heatmap) or TaskItem
         const target = eventData.event.target as HTMLElement;
         if (target.closest('.overflow-x-auto')) return; // Heatmap check
-        if (target.closest('.group.overflow-hidden')) return; // TaskItem check (assuming class structure)
+        if (target.closest('.task-card')) return; // TaskItem check
         
         handleSwipe('left');
       },
       onSwipedRight: (eventData) => {
         const target = eventData.event.target as HTMLElement;
         if (target.closest('.overflow-x-auto')) return;
-        if (target.closest('.group.overflow-hidden')) return;
-        
+        if (target.closest('.task-card')) return;
+
         handleSwipe('right');
       },
       preventScrollOnSwipe: false,

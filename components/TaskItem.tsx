@@ -56,6 +56,7 @@ export function TaskItem({ todo, onToggle, onDelete, onEdit, onUpdatePriority }:
   // Swipe Handlers
   const handlers = useSwipeable({
     onSwiping: (eventData: SwipeEventData) => {
+        eventData.event.stopPropagation();
         if (isEditing) return;
         // Only allow right swipe (deltaX > 0)
         if (eventData.deltaX > 0) {
@@ -63,6 +64,7 @@ export function TaskItem({ todo, onToggle, onDelete, onEdit, onUpdatePriority }:
         }
     },
     onSwipedRight: (eventData: SwipeEventData) => {
+        eventData.event.stopPropagation();
         if (isEditing) return;
         if (eventData.deltaX > 100) {
             onToggle(todo.id);
@@ -71,7 +73,8 @@ export function TaskItem({ todo, onToggle, onDelete, onEdit, onUpdatePriority }:
             setSwipeOffset(0);
         }
     },
-    onTouchEndOrOnMouseUp: () => {
+    onTouchEndOrOnMouseUp: (event) => {
+        event.event.stopPropagation();
         if (Math.abs(swipeOffset) < 100) {
              setSwipeOffset(0);
         }
@@ -86,7 +89,7 @@ export function TaskItem({ todo, onToggle, onDelete, onEdit, onUpdatePriority }:
 
   return (
     <div className={cn(
-      "relative mb-3 group rounded-xl transition-all",
+      "relative mb-3 group rounded-xl transition-all task-card",
       showPriorityMenu ? "z-50" : "z-auto"
     )}>
         {/* Swipe Background Visuals */}
