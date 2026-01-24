@@ -56,8 +56,8 @@ export function TaskItem({ todo, onToggle, onDelete, onEdit, onUpdatePriority }:
     <div className={cn(
       "relative flex items-center gap-3 p-4 mb-3 rounded-xl border transition-all duration-300 group",
       isEditing 
-        ? "bg-zinc-900/50 border-zinc-700 ring-1 ring-zinc-700" 
-        : "bg-black border-zinc-800 hover:border-zinc-700 hover:shadow-lg hover:shadow-black/50"
+        ? "bg-secondary/50 border-input ring-1 ring-ring" 
+        : "bg-card border-border hover:border-muted-foreground/50 hover:shadow-lg dark:hover:shadow-black/50"
     )}>
       
       {/* 2. Custom Checkbox: Tactile feel */}
@@ -66,8 +66,8 @@ export function TaskItem({ todo, onToggle, onDelete, onEdit, onUpdatePriority }:
         className={cn(
           "w-5 h-5 flex items-center justify-center rounded-md border transition-all duration-200 shrink-0",
           todo.completed
-            ? "bg-white border-white text-black shadow-[0_0_10px_rgba(255,255,255,0.3)]" // Active: White Glow
-            : "bg-transparent border-zinc-700 hover:border-zinc-500 text-transparent" // Inactive: Empty Void
+            ? "bg-primary border-primary text-primary-foreground shadow-[0_0_10px_rgba(255,255,255,0.3)] dark:shadow-none" // Active
+            : "bg-transparent border-muted-foreground/30 hover:border-muted-foreground text-transparent" // Inactive
         )}
       >
         <Check size={12} strokeWidth={4} />
@@ -86,10 +86,10 @@ export function TaskItem({ todo, onToggle, onDelete, onEdit, onUpdatePriority }:
                 if (e.key === 'Enter') handleSaveEdit();
                 if (e.key === 'Escape') handleCancelEdit();
               }}
-              className="w-full bg-transparent text-base text-white outline-none border-b border-zinc-700 focus:border-white pb-1 transition-colors placeholder:text-zinc-600"
+              className="w-full bg-transparent text-base text-foreground outline-none border-b border-border focus:border-foreground pb-1 transition-colors placeholder:text-muted-foreground"
             />
-            <div className="flex items-center gap-2 text-[10px] text-zinc-500 uppercase tracking-widest font-mono">
-               Press Enter to save <span className="text-zinc-700">|</span> Esc to cancel
+            <div className="flex items-center gap-2 text-[10px] text-muted-foreground uppercase tracking-widest font-mono">
+               Press Enter to save <span className="text-foreground/50">|</span> Esc to cancel
             </div>
           </div>
         ) : (
@@ -98,7 +98,7 @@ export function TaskItem({ todo, onToggle, onDelete, onEdit, onUpdatePriority }:
             <span
               className={cn(
                 "text-base leading-snug break-all transition-all duration-300 select-none",
-                todo.completed ? "text-zinc-600 line-through decoration-zinc-800" : "text-zinc-200"
+                todo.completed ? "text-muted-foreground line-through decoration-border" : "text-foreground"
               )}
             >
               {todo.text}
@@ -116,7 +116,7 @@ export function TaskItem({ todo, onToggle, onDelete, onEdit, onUpdatePriority }:
                   
                   {/* Glassy Dropdown Menu */}
                   {showPriorityMenu && (
-                    <div className="absolute top-full left-0 mt-2 z-20 w-32 bg-black border border-zinc-800 rounded-lg shadow-xl p-1 animate-in fade-in zoom-in-95 duration-100">
+                    <div className="absolute top-full left-0 mt-2 z-20 w-32 bg-popover border border-border rounded-lg shadow-xl p-1 animate-in fade-in zoom-in-95 duration-100">
                       {(['High', 'Medium', 'Low'] as Priority[]).map((priority) => (
                         <button
                           key={priority}
@@ -127,8 +127,8 @@ export function TaskItem({ todo, onToggle, onDelete, onEdit, onUpdatePriority }:
                           className={cn(
                             "w-full text-left px-3 py-2 text-xs font-medium rounded-md transition-colors font-mono uppercase",
                             todo.priority === priority 
-                              ? "bg-zinc-900 text-white" 
-                              : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/50"
+                              ? "bg-secondary text-foreground" 
+                              : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
                           )}
                         >
                           {priority}
@@ -145,20 +145,20 @@ export function TaskItem({ todo, onToggle, onDelete, onEdit, onUpdatePriority }:
       {/* 5. Actions: Always visible */}
       <div className="flex items-center gap-1">
         {isEditing ? (
-          <button onClick={handleSaveEdit} className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors">
+          <button onClick={handleSaveEdit} className="p-2 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg transition-colors">
             <Save size={16} />
           </button>
         ) : (
           <>
             <button
               onClick={() => setIsEditing(true)}
-              className="p-2 text-zinc-500 hover:text-white hover:bg-zinc-900 rounded-lg transition-colors"
+              className="p-2 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg transition-colors"
             >
               <Pencil size={15} />
             </button>
             <button
               onClick={() => onDelete(todo.id)}
-              className="p-2 text-zinc-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+              className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
             >
               <Trash2 size={15} />
             </button>

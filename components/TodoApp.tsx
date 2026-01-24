@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Header } from "./Header";
-import { TaskForm } from "./TaskForm";
+import { TaskForm, TaskFormHandle } from "./TaskForm";
 import { TaskItem } from "./TaskItem";
 import { Analytics } from "./Analytics";
 import { DeadlineSection } from "./DeadlineSection";
 import { useTodos } from "@/hooks/useTodos";
 import { Priority, Todo } from "@/types/todo";
 import { Plus } from "lucide-react";
+import { useSwipeable } from "react-swipeable";
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
 
@@ -16,6 +17,7 @@ export function TodoApp() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<'list' | 'analytics' | 'deadlines'>('list');
   const { todos, addTodo, toggleTodo, deleteTodo, editTodo, updatePriority, updateTodo, isLoaded } = useTodos();
+  const taskFormRef = useRef<TaskFormHandle>(null);
 
   const handlePrevDay = () => {
     const newDate = new Date(currentDate);
@@ -70,6 +72,18 @@ export function TodoApp() {
     addTodo(newTodo);
   };
 
+  const handlers = useSwipeable({
+    onSwipedLeft: () => {
+      if (view === 'analytics') setView('list');
+      else if (view === 'list') setView('deadlines');
+    },
+    onSwipedRight: () => {
+      if (view === 'deadlines') setView('list');
+      else if (view === 'list') setView('analytics');
+    },
+    trackMouse: true
+  });
+
   if (!isLoaded) {
     return <div className="flex h-screen items-center justify-center">Loading...</div>;
   }
@@ -78,7 +92,7 @@ export function TodoApp() {
   const totalCount = sortedTodos.length;
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col font-sans">
+    <div {...handlers} className="min-h-screen bg-background text-foreground flex flex-col font-sans transition-colors duration-300">
       <Header 
         currentDate={currentDate} 
         onPrev={handlePrevDay} 
@@ -102,14 +116,17 @@ export function TodoApp() {
           />
         ) : (
           sortedTodos.length === 0 ? (
-            <div className="flex h-full flex-col items-center justify-center text-gray-400 mt-20 animate-in fade-in duration-500">
+            <div className="flex h-full flex-col items-center justify-center text-muted-foreground mt-20 animate-in fade-in duration-500">
               <div className="text-center space-y-4">
-                <div className="w-16 h-16 mx-auto bg-black border border-white rounded-full flex items-center justify-center">
-                  <Plus size={32} className="text-gray-500" />
-                </div>
+                <button 
+                  onClick={() => taskFormRef.current?.focus()}
+                  className="w-16 h-16 mx-auto bg-primary border-2 border-primary-foreground/20 rounded-full flex items-center justify-center hover:bg-primary/90 transition-colors cursor-pointer group shadow-lg"
+                >
+                  <Plus size={32} className="text-primary-foreground group-hover:scale-110 transition-transform" />
+                </button>
                 <div>
-                  <p className="text-xl font-medium text-gray-300">No tasks for this day</p>
-                  <p className="text-sm text-gray-500 mt-2">Tap the + button below to add your first task</p>
+                  <p className="text-xl font-medium text-foreground">No tasks for this day</p>
+                  <p className="text-sm text-muted-foreground mt-2">Tap the + button below to add your first task</p>
                 </div>
               </div>
             </div>
@@ -130,7 +147,7 @@ export function TodoApp() {
         )}
       </main>
 
-      {view === 'list' && <TaskForm onAdd={handleAddTodo} />}
+      {view === 'list' && <TaskForm ref={taskFormRef} onAdd={handleAddTodo} />}
     </div>
   );
 }

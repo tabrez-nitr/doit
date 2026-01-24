@@ -1,19 +1,32 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react";
 import { Priority } from "@/types/todo";
 import { cn } from "@/lib/utils";
 import { Plus, X, ArrowUp, ArrowDown, AlertCircle } from "lucide-react";
+
+export interface TaskFormHandle {
+  focus: () => void;
+}
 
 interface TaskFormProps {
   onAdd: (text: string, priority: Priority) => void;
 }
 
-export function TaskForm({ onAdd }: TaskFormProps) {
+export const TaskForm = forwardRef<TaskFormHandle, TaskFormProps>(({ onAdd }, ref) => {
   const [text, setText] = useState("");
   const [priority, setPriority] = useState<Priority>("Medium");
   const [isExpanded, setIsExpanded] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      setIsExpanded(true);
+      // Timeout to ensure state update has rendered the input visible (if it was hidden)
+      // though here the input is always rendered, just the wrapper expands.
+      setTimeout(() => inputRef.current?.focus(), 50); 
+    }
+  }));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,15 +50,16 @@ export function TaskForm({ onAdd }: TaskFormProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isExpanded]);
 
+  // Priorities retain their colors as they are semantic alerts
   const priorities: { value: Priority; color: string; icon: any }[] = [
-    { value: "High", color: "text-red-400 border-red-500/30 bg-red-500/10", icon: AlertCircle },
-    { value: "Medium", color: "text-amber-400 border-amber-500/30 bg-amber-500/10", icon: ArrowUp },
-    { value: "Low", color: "text-emerald-400 border-emerald-500/30 bg-emerald-500/10", icon: ArrowDown },
+    { value: "High", color: "text-red-500 border-red-500/30 bg-red-500/10 dark:text-red-400", icon: AlertCircle },
+    { value: "Medium", color: "text-amber-500 border-amber-500/30 bg-amber-500/10 dark:text-amber-400", icon: ArrowUp },
+    { value: "Low", color: "text-emerald-500 border-emerald-500/30 bg-emerald-500/10 dark:text-emerald-400", icon: ArrowDown },
   ];
 
   return (
-    // 1. Container: Glassy black effect (floating dock feel)
-    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-black/80 backdrop-blur-xl border-t border-zinc-800 transition-all duration-300">
+    // 1. Container: Glassy effect
+    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-background/80 backdrop-blur-xl border-t border-border transition-all duration-300">
       <div className="max-w-2xl mx-auto">
         
         <form onSubmit={handleSubmit} className="flex flex-col gap-3 relative">
@@ -53,7 +67,7 @@ export function TaskForm({ onAdd }: TaskFormProps) {
           {/* 2. Priority Selector: Expands Upwards */}
           {isExpanded && (
             <div className="flex items-center gap-2 mb-1 animate-in slide-in-from-bottom-2 fade-in duration-200">
-              <span className="text-[10px] font-mono font-medium text-zinc-500 uppercase tracking-wider mr-2">
+              <span className="text-[10px] font-mono font-medium text-muted-foreground uppercase tracking-wider mr-2">
                 Priority
               </span>
               {priorities.map((p) => (
@@ -64,8 +78,8 @@ export function TaskForm({ onAdd }: TaskFormProps) {
                   className={cn(
                     "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-all duration-200",
                     priority === p.value
-                      ? cn(p.color, "shadow-[0_0_10px_rgba(0,0,0,0.5)]") // Active: Glowing color
-                      : "bg-zinc-900 border-zinc-800 text-zinc-500 hover:text-zinc-300 hover:border-zinc-700" // Inactive: Dark
+                      ? cn(p.color, "shadow-sm dark:shadow-[0_0_10px_rgba(0,0,0,0.5)]") // Active
+                      : "bg-secondary border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground/50" // Inactive
                   )}
                 >
                   <p.icon className="w-3 h-3" />
@@ -79,7 +93,7 @@ export function TaskForm({ onAdd }: TaskFormProps) {
               <button 
                 type="button" 
                 onClick={() => setIsExpanded(false)}
-                className="text-zinc-500 hover:text-white transition-colors p-1"
+                className="text-muted-foreground hover:text-foreground transition-colors p-1"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -90,8 +104,8 @@ export function TaskForm({ onAdd }: TaskFormProps) {
           <div className={cn(
             "flex items-center gap-2 p-1.5 rounded-2xl border transition-all duration-300",
             isExpanded 
-              ? "bg-black border-zinc-700 ring-1 ring-zinc-700 shadow-xl" 
-              : "bg-black border-zinc-800 hover:border-zinc-700"
+              ? "bg-background border-input ring-1 ring-ring shadow-xl" 
+              : "bg-muted/50 border-transparent hover:border-input hover:bg-muted"
           )}>
             <input
               ref={inputRef}
@@ -100,19 +114,19 @@ export function TaskForm({ onAdd }: TaskFormProps) {
               onChange={(e) => setText(e.target.value)}
               onFocus={() => setIsExpanded(true)}
               placeholder="What needs to be done?"
-              className="flex-1 bg-transparent border-none px-4 py-3 text-white placeholder:text-zinc-600 focus:ring-0 focus:outline-none text-base"
+              className="flex-1 bg-transparent border-none px-4 py-3 text-foreground placeholder:text-muted-foreground focus:ring-0 focus:outline-none text-base"
               autoComplete="off"
             />
             
-            {/* 4. Submit Button: High contrast white */}
+            {/* 4. Submit Button: High contrast */}
             <button
               type="submit"
               disabled={!text.trim()}
               className={cn(
                 "p-3 rounded-xl transition-all duration-200 flex items-center justify-center",
                 text.trim()
-                  ? "bg-white text-black hover:bg-zinc-200 shadow-lg cursor-pointer scale-100"
-                  : "bg-zinc-800 text-zinc-600 cursor-not-allowed scale-90 opacity-50"
+                  ? "bg-primary text-primary-foreground hover:opacity-90 shadow-lg cursor-pointer scale-100"
+                  : "bg-muted text-muted-foreground cursor-not-allowed scale-90 opacity-50"
               )}
             >
               <Plus size={20} strokeWidth={2.5} />
@@ -122,4 +136,6 @@ export function TaskForm({ onAdd }: TaskFormProps) {
       </div>
     </div>
   );
-}
+});
+
+TaskForm.displayName = "TaskForm";
