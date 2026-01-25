@@ -1,13 +1,13 @@
 "use client";
 
-import { ListTodo, CalendarClock, ChartBar, Moon, Sun } from "lucide-react";
+import { ListTodo, CalendarClock, ChartBar, Moon, Sun, IndianRupee } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
 interface BottomNavProps {
-  currentView: 'list' | 'analytics' | 'deadlines';
-  onChange: (view: 'list' | 'analytics' | 'deadlines') => void;
+  currentView: 'list' | 'analytics' | 'deadlines' | 'finance';
+  onChange: (view: 'list' | 'analytics' | 'deadlines' | 'finance') => void;
 }
 
 export function BottomNav({ currentView, onChange }: BottomNavProps) {
@@ -61,6 +61,20 @@ export function BottomNav({ currentView, onChange }: BottomNavProps) {
         >
           <CalendarClock size={24} strokeWidth={currentView === 'deadlines' ? 2.5 : 2} />
           <span className="text-[10px] font-medium">Deadlines</span>
+        </button>
+
+        {/* 4. Finance */}
+        <button
+          onClick={() => onChange('finance')}
+          className={cn(
+            "flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors duration-200",
+            currentView === 'finance' 
+              ? "text-primary" 
+              : "text-muted-foreground hover:text-foreground"
+          )}
+        >
+          <IndianRupee size={24} strokeWidth={currentView === 'finance' ? 2.5 : 2} />
+          <span className="text-[10px] font-medium">Expenses</span>
         </button>
 
         {/* 4. Theme Toggle */}

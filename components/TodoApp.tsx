@@ -6,6 +6,7 @@ import { TaskForm, TaskFormHandle } from "./TaskForm";
 import { TaskItem } from "./TaskItem";
 import { Analytics } from "./Analytics";
 import { DeadlineSection } from "./DeadlineSection";
+import { FinanceSection } from "./FinanceSection";
 
 import { useTodos } from "@/hooks/useTodos";
 import { useLocalNotifications } from "@/hooks/useLocalNotifications"; // [NEW]
@@ -38,7 +39,7 @@ const variants = {
 
 export function TodoApp() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [view, setView] = useState<'list' | 'analytics' | 'deadlines'>('list');
+  const [view, setView] = useState<'list' | 'analytics' | 'deadlines' | 'finance'>('list');
   const [direction, setDirection] = useState(0);
   const [showSplash, setShowSplash] = useState(true);
   const { todos, addTodo, toggleTodo, deleteTodo, editTodo, updatePriority, updateTodo, isLoaded } = useTodos();
@@ -54,7 +55,7 @@ export function TodoApp() {
     return () => clearTimeout(timer);
   }, []);
 
-  const VIEWS = ['analytics', 'list', 'deadlines'] as const;
+  const VIEWS = ['analytics', 'list', 'deadlines', 'finance'] as const;
 
   const handleViewChange = (newView: typeof view) => {
     if (view === newView) return;
@@ -172,6 +173,7 @@ export function TodoApp() {
           {...handlers}
           className="min-h-screen bg-background text-foreground flex flex-col font-sans transition-colors duration-300 touch-pan-y overflow-hidden"
       >
+      {view !== 'finance' && (
       <Header 
         currentDate={currentDate} 
         onPrev={handlePrevDay} 
@@ -181,6 +183,7 @@ export function TodoApp() {
         view={view}
         onToggleView={handleViewChange}
       />
+      )}
 
       <main className="flex-1 p-6 pb-32 overflow-y-auto overflow-x-hidden">
         <AnimatePresence initial={false} custom={direction} mode="wait">
@@ -210,6 +213,8 @@ export function TodoApp() {
                     onDelete={deleteTodo}
                     onUpdate={updateTodo}
                 />
+                ) : view === 'finance' ? (
+                  <FinanceSection />
                 ) : (
                 sortedTodos.length === 0 ? (
                     <div className="flex h-full flex-col items-center justify-center text-muted-foreground mt-20 animate-in fade-in duration-500">
