@@ -40,10 +40,17 @@ export function useExpenses() {
     });
   };
 
+  const editExpense = (id: string, updates: Partial<Expense>) => {
+    setExpenses((prev) =>
+      prev.map((e) => (e.id === id ? { ...e, ...updates } : e))
+    );
+  };
+
   return {
     expenses,
     addExpense,
     deleteExpense,
+    editExpense,
     getExpensesByMonth,
     isLoaded,
   };

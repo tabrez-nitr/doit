@@ -3,7 +3,7 @@
 import { Todo } from "@/types/todo";
 import { useTheme } from "next-themes";
 import { useEffect, useState, useRef } from "react";
-import { cn } from "@/lib/utils";
+import { cn, toLocalDateString } from "@/lib/utils";
 
 interface ActivityHeatmapProps {
   todos: Todo[];
@@ -39,7 +39,7 @@ export function ActivityHeatmap({ todos }: ActivityHeatmapProps) {
     
     while (current <= end) {
         const monthKey = current.toLocaleString('default', { month: 'short', year: 'numeric' });
-        const dateStr = current.toISOString().split('T')[0];
+        const dateStr = toLocalDateString(current);
         
         if (!months[monthKey]) {
             months[monthKey] = [];

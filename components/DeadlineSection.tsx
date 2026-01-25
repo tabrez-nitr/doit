@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Todo, Priority } from "@/types/todo";
 import { Plus, Calendar as CalendarIcon, Flag, Clock, Trash2, Check, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, toLocalDateString } from "@/lib/utils";
 import { Calendar } from "./Calendar";
 
 interface DeadlineSectionProps {
@@ -161,9 +161,7 @@ export function DeadlineSection({ todos, onAdd, onToggle, onDelete, onUpdate }: 
                         <Calendar 
                             selected={deadline ? new Date(deadline) : null}
                             onSelect={(date) => {
-                                const offset = date.getTimezoneOffset();
-                                const localDate = new Date(date.getTime() - (offset*60*1000));
-                                setDeadline(localDate.toISOString().split('T')[0]);
+                                setDeadline(toLocalDateString(date));
                                 setShowCalendar(false);
                             }}
                         />

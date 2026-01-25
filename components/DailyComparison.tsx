@@ -12,6 +12,7 @@ import {
   Cell,
 } from "recharts";
 import { useEffect, useState } from "react";
+import { toLocalDateString } from "@/lib/utils";
 
 interface DailyComparisonProps {
   todos: Todo[];
@@ -28,7 +29,7 @@ export function DailyComparison({ todos }: DailyComparisonProps) {
   const isDark = mounted && theme === 'dark';
 
   // Helper to get formatted date string
-  const getDateString = (date: Date) => date.toISOString().split("T")[0];
+  const getDateString = (date: Date) => toLocalDateString(date);
 
   const today = new Date();
   const yesterday = new Date();

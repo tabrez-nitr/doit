@@ -6,6 +6,7 @@ import { TaskForm, TaskFormHandle } from "./TaskForm";
 import { TaskItem } from "./TaskItem";
 import { Analytics } from "./Analytics";
 import { DeadlineSection } from "./DeadlineSection";
+import { cn, toLocalDateString } from "@/lib/utils";
 import { FinanceSection } from "./FinanceSection";
 
 import { useTodos } from "@/hooks/useTodos";
@@ -116,7 +117,7 @@ export function TodoApp() {
   };
 
   const toDateString = (date: Date) => {
-    return date.toISOString().split('T')[0];
+    return toLocalDateString(date);
   };
 
   const currentKey = toDateString(currentDate);
@@ -149,8 +150,8 @@ export function TodoApp() {
       id: generateId(),
       text,
       priority,
-      date: deadline, // You might want separate field, but for now associating with that date
-      deadline: deadline, // Tracking the deadline explicitly
+      date: deadline, 
+      deadline: deadline,
       completed: false,
     };
     addTodo(newTodo);

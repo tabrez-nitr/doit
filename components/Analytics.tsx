@@ -17,6 +17,7 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { ActivityHeatmap } from "./ActivityHeatmap";
 import { DailyComparison } from "./DailyComparison";
+import { toLocalDateString } from "@/lib/utils";
 
 interface AnalyticsProps {
   todos: Todo[];
@@ -66,7 +67,7 @@ export function Analytics({ todos, permission, onRequestPermission }: AnalyticsP
     for (let i = 6; i >= 0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);
-      days.push(d.toISOString().split("T")[0]);
+      days.push(toLocalDateString(d));
     }
     return days;
   };
@@ -123,128 +124,70 @@ export function Analytics({ todos, permission, onRequestPermission }: AnalyticsP
 
   // --- Daily Quote Engine ---
  const quotes = [
-  "You are not behind in life. Most people are just pretending they have it figured out. — Unknown",
-  "The version of you that wins is the one that stops making excuses for the version that loses. — Unknown",
-  "People don't leave because the relationship is bad. They leave because staying hurts more. — Unknown",
-  "Your anxiety is just your brain rehearsing every way you can fuck up tomorrow. — Unknown",
-  "Most 'overnight successes' spent years being invisible and miserable. — Unknown",
-  "The moment you realize no one is obligated to like you is strangely liberating. — Unknown",
-  "You will outgrow people who refuse to grow. It will feel like betrayal. It isn't. — Unknown",
-  "Love doesn't conquer all. It just makes the inevitable heartbreak more expensive. — Unknown",
-  "You're not 'too much' for the right person. You're just too much for people who can't handle depth. — Unknown",
-  "The quietest people usually carry the loudest storms inside. — Unknown",
-  "You don't hate Mondays. You hate the life you built that makes Monday feel like punishment. — Unknown",
-  "Most people aren't depressed—they're just disappointed with who they've become. — Unknown",
-  "The strongest people aren't the ones who never cry. They're the ones who cry and then keep going. — Unknown",
-  "You will never be 'ready.' Readiness is a myth invented by people too scared to start. — Unknown",
-  "Your trauma didn't make you stronger. It made you survive. Strength is what you build afterward. — Unknown",
-  "People will clap for your failure louder than they ever did for your effort. — Unknown",
-  "The person who broke you isn't coming back to fix you. Stop waiting. — Unknown",
-  "You attract what you believe you deserve. Raise your standards or stay disappointed. — Unknown",
-  "Most conversations are just people waiting for their turn to talk about themselves. — Unknown",
-  "You can't heal in the same environment that broke you. — Unknown",
-  "The loneliest feeling is realizing the person you trusted most was never really there. — Unknown",
-  "Your childhood wounds keep choosing your partners until you heal them. — Unknown",
-  "People remember how you made them feel more than anything you ever said or did. Use that power wisely. — Unknown",
-  "You are allowed to outgrow people who no longer fit your growth. It doesn't make you cold. — Unknown",
-  "The biggest lie is 'I'll be happy when…' Happiness isn't postponed. It's chosen. — Unknown",
-  "You will lose people. Not because you did something wrong. Because they were only meant for a chapter. — Unknown",
-  "Most revenge is just poisoning yourself and hoping the other person gets sick. — Unknown",
-  "The older you get, the more you value silence over bullshit conversation. — Unknown",
-  "You don't need closure from someone who already closed the door. — Unknown",
-  "Your worth isn't measured by how many people want you. It's measured by how many people can keep you. — Unknown",
-  "Pain changes people. Some become softer. Some become sharper. Choose your direction. — Unknown",
-  "Stop explaining yourself to people who are committed to misunderstanding you. — Unknown",
-  "The person who never apologizes is usually the one who should apologize the most. — Unknown",
-  "You can't save someone who doesn't want to be saved. Stop trying. — Unknown",
-  "Most people fear being alone more than they fear being in bad relationships. — Unknown",
-  "The truth you avoid today becomes the regret you carry tomorrow. — Unknown",
-  "You are not obligated to set yourself on fire to keep others warm. — Unknown",
-  "People treat you the way they feel about themselves when they're with you. — Unknown",
-  "Your intuition screams before your brain makes excuses. Listen sooner. — Unknown",
-  "The people who matter don't need constant reassurance. The ones who do… usually aren't worth it. — Unknown",
-  "You don't find peace by avoiding life. You find it by facing it. — Unknown",
-  "Most breakdowns happen right before breakthroughs. Keep going. — Unknown",
-  "The version of you that survives today is the version that wins tomorrow. — Unknown",
-  "Stop begging for seats at tables that don't value you. Build your own. — Unknown",
-  "You teach people how expensive you are by how cheaply you let them treat you. — Unknown",
-  "The moment you stop chasing people who don't chase you, your life gets quieter and better. — Unknown",
-  "Your peace is more important than proving a point. — Unknown",
-  "People who can't celebrate your wins aren't your friends. They're spectators. — Unknown",
-  "The strongest people aren't unbreakable. They're the ones who break and rebuild smarter. — Unknown",
-  "You don't owe anyone an explanation for protecting your energy. — Unknown",
-  "The right people don't make you beg for consistency. — Unknown",
-  "Healing isn't linear. Some days you win, some days you just survive. Both count. — Unknown",
-  "Stop romanticizing people who only show up when it's convenient. — Unknown",
-  "Your life changes when you stop accepting disrespect disguised as love. — Unknown",
-  "The person who is hardest on you is usually you. Be kinder. — Unknown",
-  "You can't force someone to see your worth when they're committed to seeing your flaws. — Unknown",
-  "Sometimes walking away is the most powerful thing you can do for yourself. — Unknown",
-  "Time doesn't heal anything; it just teaches you how to live with the pain. — Unknown",
-  "Your parents won't always be there, and you'll regret the things you didn't say more than the things you did. — Unknown",
-  "Friendships fade when convenience ends. True ones survive silence. — Unknown",
-  "Money doesn't buy happiness, but poverty buys a lot of misery. — Unknown",
-  "The older you get, the more you realize most people are full of shit. — Unknown",
-  "You don't miss the person; you miss the version of life they gave you. — Unknown",
-  "People will use your kindness as weakness until you show them it's a choice. — Unknown",
-  "Regret weighs more than failure ever will. — Unknown",
-  "You teach people how to treat you by what you accept. — Unknown",
-  "Life is short, and we're all dying—most just pretend it's not happening. — Unknown",
-  "The person who cares least in a relationship has all the power. — Unknown",
-  "Nobody's thinking about you as much as you think they are. — Unknown",
-  "Your health is your real wealth—ignore it and watch everything crumble. — Unknown",
-  "You can't fix people who don't want to be fixed. Stop trying. — Unknown",
-  "Betrayal comes from the people you trust most because strangers can't betray you. — Unknown",
-  "Success changes people; failure reveals them. — Unknown",
-  "The truth is lonely—most prefer comfortable lies. — Unknown",
-  "You lose people in life: some by death, most by choice. — Unknown",
-  "Your ego is the loudest voice keeping you small. — Unknown",
-  "What you tolerate becomes your standard. Raise it or stay stuck. — Unknown",
-  "Life punishes indecision harder than wrong decisions. — Unknown",
-  "People remember your silence more than your words. — Unknown",
-  "The moment you stop caring what others think is the moment you start living. — Unknown",
-  "Forgive others, but never forget—trust is earned, not given blindly. — Unknown",
-  "Your past is a lesson, not a life sentence—unless you keep replaying it. — Unknown",
-  "Everyone is replaceable, including you. Act accordingly. — Unknown",
-  "Happiness isn't found; it's built—and most people are too lazy to build. — Unknown",
-  "The hardest prison to escape is the one in your mind. — Unknown",
-  "You attract what you are, not what you want. Fix yourself first. — Unknown",
-  "Death is the only thing that makes life fair—everyone gets the same end. — Unknown",
-  "Stop waiting for closure; sometimes it never comes. Move anyway. — Unknown",
-  "Your excuses are louder than your ambitions. — Unknown",
-  "People show you who they are—believe them the first time. — Maya Angelou (harsh edition)",
-  "The best revenge is massive success, but most settle for bitterness. — Unknown",
-  "Life doesn't pause for your breakdowns. Keep moving or get left behind. — Unknown",
-  "You can't pour from an empty cup, but most people keep trying until they break. — Unknown",
-  "Trust is like glass: once shattered, even if glued, the cracks remain. — Unknown",
-  "The loneliest place is in a crowd of people who don't really know you. — Unknown",
-  "Your comfort zone is a beautiful place, but nothing ever grows there. — Unknown",
-  "Most arguments are about pride, not facts. — Unknown",
-  "You become what you feed your mind—garbage in, garbage out. — Unknown",
-  "Time reveals everything: loyalty, love, character. Just wait. — Unknown",
-  "The person you think about most probably doesn't think about you at all. — Unknown",
-  "Life is brutal, but complaining won't change the rules. — Unknown",
-  "You only regret the chances you didn't take—especially the ones with people. — Unknown",
-  "Everyone leaves eventually. Some just do it slower. — Unknown",
-  "Your story isn't special until you make it one. — Unknown",
-  "The universe doesn't conspire for or against you—it just doesn't care. — Unknown",
-  "Pain is the best teacher, but most students skip class. — Unknown",
-  "Stop romanticizing potential. Results are what matter. — Unknown",
-  "You can't outrun your own bullshit forever. — Unknown"
+  "Energy and persistence conquer all things. — Benjamin Franklin",
+  "Nothing in this world can take the place of persistence. Talent will not; nothing is more common than unsuccessful men with talent. Persistence and determination alone are omnipotent. — Calvin Coolidge",
+  "The price of success is hard work, dedication to the job at hand, and the determination that whether we win or lose, we have applied the best of ourselves to the task at hand. — Vince Lombardi",
+  "There is no substitute for hard work. — Thomas Edison",
+  "I hated every minute of training, but I said, 'Don't quit. Suffer now and live the rest of your life as a champion.' — Muhammad Ali",
+  "Far and away the best prize that life offers is the chance to work hard at work worth doing. — Theodore Roosevelt",
+  "Perseverance is the hard work you do after you get tired of doing the hard work you already did. — Newt Gingrich",
+  "Hard work beats talent when talent doesn't work hard. — Tim Notke",
+  "The only thing that overcomes hard luck is hard work. — Harry Golden",
+  "There are no shortcuts to any place worth going. — Beverly Sills",
+  "If you are not willing to risk the unusual, you will have to settle for the ordinary. — Jim Rohn",
+  "The biggest risk is not taking any risk... In a world that's changing really quickly, the only strategy that is guaranteed to fail is not taking risks. — Mark Zuckerberg",
+  "Only those who will risk going too far can possibly find out how far one can go. — T.S. Eliot",
+  "Man cannot discover new oceans until he has the courage to lose sight of the shore. — André Gide",
+  "Leap and the net will appear. — John Burroughs",
+  "To win without risk is to triumph without glory. — Pierre Corneille",
+  "Living at risk is jumping off the cliff and building your wings on the way down. — Ray Bradbury",
+  "Don't be too timid and squeamish about your actions. All life is an experiment. The more experiments you make the better. — Ralph Waldo Emerson",
+  "Screw it, let's do it. — Richard Branson",
+  "I knew that if I failed I wouldn't regret that, but I knew the one thing I might regret is not trying. — Jeff Bezos",
+  "If you're offered a seat on a rocket ship, don't ask what seat. Just get on. — Sheryl Sandberg",
+  "Be brave, take risks. Nothing can substitute experience. — Paulo Coelho",
+  "He who is not courageous enough to take risks will accomplish nothing in life. — Muhammad Ali",
+  "Courage is resistance to fear, mastery of fear—not absence of fear. — Mark Twain",
+  "The man who moves a mountain begins by carrying away small stones. — Confucius",
+  "There is one quality which one must possess to win, and that is definiteness of purpose, the knowledge of what one wants, and a burning desire to possess it. — Napoleon Hill, Think and Grow Rich",
+  "If you are of those who believe that hard work and honesty, alone, will bring riches, perish the thought! Riches, when they come in huge quantities, are never the result of hard work! — Napoleon Hill, Think and Grow Rich",
+  "Don't aim at success. The more you aim at it and make it a target, the more you are going to miss it. For success, like happiness, cannot be pursued; it must ensue... as the unintended side-effect of one's personal dedication to a cause greater than oneself. — Viktor E. Frankl, Man's Search for Meaning",
+  "When we are no longer able to change a situation, we are challenged to change ourselves. — Viktor E. Frankl, Man's Search for Meaning",
+  "Everything can be taken from a man but one thing: the last of the human freedoms—to choose one's attitude in any given set of circumstances, to choose one's own way. — Viktor E. Frankl, Man's Search for Meaning",
+  "Your success depends on the risks you take. Your survival depends on the risks you avoid. — James Clear (from his writings and newsletters)",
+  "Every action you take is a vote for the type of person you wish to become. — James Clear, Atomic Habits",
+  "The greatest threat to success is not failure but boredom. We get bored with habits because they stop delighting us. — James Clear, Atomic Habits",
+  "You don't have to be great to start, but you have to start to be great. — Zig Ziglar",
+  "The secret of getting ahead is getting started. — Mark Twain",
+  "I have not failed. I've just found 10,000 ways that won't work. — Thomas Edison",
+  "Success is the sum of small efforts, repeated day in and day out. — Robert Collier",
+  "Discipline is the bridge between goals and accomplishment. — Jim Rohn",
+  "The only way to do great work is to love what you do. — Steve Jobs",
+  "You miss 100% of the shots you don't take. — Wayne Gretzky",
+  "It always seems impossible until it's done. — Nelson Mandela",
+  "The best way out is always through. — Robert Frost",
+  "No man is worth his salt who is not ready at all times to risk his well-being, to risk his body, to risk his life in a great cause. — Theodore Roosevelt",
+  "Courage doesn't always roar. Sometimes courage is the quiet voice at the end of the day saying 'I will try again tomorrow.' — Mary Anne Radmacher",
+  "Adventure is worthwhile. — Aesop",
+  "A ship in harbor is safe, but that is not what ships are built for. — John A. Shedd",
+  "Risk more than others think is safe. Dream more than others think is practical. — Howard Schultz",
+  "If you don't build your dream, someone else will hire you to help build theirs. — Tony Gaskins",
+  "Work like there is someone working 24 hours a day to take it away from you. — Mark Cuban",
+  "Great works are performed not by strength but by perseverance. — Samuel Johnson",
+  "Effort only fully releases its reward after a person refuses to quit. — Napoleon Hill"
+ 
+  
+  
 ];
 
-  const getDailyQuote = () => {
-    const dayOfYear = Math.floor(
-      (new Date().getTime() - new Date(new Date().getFullYear(), 0, 0).getTime()) /
-        1000 /
-        60 /
-        60 /
-        24
-    );
-    return quotes[dayOfYear % quotes.length];
+  const getQuote = () => {
+    const hours = 4;
+    const msPerInterval = hours * 60 * 60 * 1000;
+    const intervalIndex = Math.floor(new Date().getTime() / msPerInterval);
+    return quotes[intervalIndex % quotes.length];
   };
 
-  const dailyQuote = getDailyQuote();
+  const currentQuote = getQuote();
   const suggestions = getSuggestions();
 
   return (
@@ -328,7 +271,7 @@ export function Analytics({ todos, permission, onRequestPermission }: AnalyticsP
         
         {/* Daily Quote Card */}
         <div className="bg-linear-to-br from-zinc-800 to-black p-4 rounded-xl border border-zinc-700/50 shadow-md">
-           <p className="text-zinc-300 italic text-sm">"{dailyQuote}"</p>
+           <p className="text-zinc-300 italic text-sm">"{currentQuote}"</p>
         </div>
 
        
