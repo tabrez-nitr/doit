@@ -34,6 +34,7 @@ export function Header({ currentDate, onPrev, onNext, completedCount = 0, totalC
 
   const progressPercentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
+
   return (
     // 1. Container: Semantic background and border
     <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border p-3 flex flex-col gap-1 transition-colors duration-300">
@@ -84,40 +85,6 @@ export function Header({ currentDate, onPrev, onNext, completedCount = 0, totalC
         </button>
       </div>
 
-       {/* View Toggle */}
-       <div className="flex justify-center gap-4 text-xs font-medium text-muted-foreground items-center">
-            
-           
-            
-            <button
-                onClick={() => onToggleView('analytics')}
-                className={`hover:text-foreground transition-colors ${view === 'analytics' ? 'text-foreground underline underline-offset-4 decoration-primary' : ''}`}
-            >
-                Analytics
-            </button>
-             <button
-                onClick={() => onToggleView('list')}
-                className={`hover:text-foreground transition-colors ${view === 'list' ? 'text-foreground underline underline-offset-4 decoration-primary' : ''}`}
-            >
-                Tasks
-            </button>
-             <button
-                onClick={() => onToggleView('deadlines')}
-                className={`hover:text-foreground transition-colors ${view === 'deadlines' ? 'text-foreground underline underline-offset-4 decoration-primary' : ''}`}
-            >
-                Deadlines
-            </button>
-            
-            {/* Theme Toggle */}
-            <button
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="ml-2 p-1.5 rounded-full hover:bg-accent hover:text-accent-foreground transition-colors text-muted-foreground"
-                aria-label="Toggle theme"
-            >
-                {mounted && theme === 'dark' ? <Moon size={14} /> : <Sun size={14} />}
-            </button>
-       </div>
-       
        {view === 'list' && totalCount > 0 && (
           <div className="flex items-center gap-3 animate-in fade-in slide-in-from-top-1 duration-300 w-full justify-center">
             <span className="text-xs font-medium text-muted-foreground font-mono">

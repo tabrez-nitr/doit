@@ -102,15 +102,24 @@ export function DeadlineSection({ todos, onAdd, onToggle, onDelete, onUpdate }: 
   };
 
   return (
-    <div className="pb-32 space-y-6 animate-in fade-in duration-500">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-foreground">Upcoming Deadlines</h2>
+    <div className="pb-32 space-y-6 animate-in">
+      <div className="flex items-center justify-between mb-2">
+       
         <button
-          onClick={() => setIsFormOpen(!isFormOpen)}
-          className="p-2 bg-primary text-primary-foreground rounded-full hover:opacity-90 transition-colors shadow-md"
-        >
-          <Plus size={20} className={cn("transition-transform duration-300", isFormOpen ? "rotate-45" : "")} />
-        </button>
+  onClick={() => setIsFormOpen(!isFormOpen)}
+  className="absolute bottom-[calc(5rem+env(safe-area-inset-bottom))] right-4 z-40
+             h-12 w-12 flex items-center justify-center
+             bg-primary text-primary-foreground rounded-full
+             shadow-lg transition-shadow duration-200"
+>
+  <Plus
+    size={24}
+    className={cn(
+      "transform transition-transform duration-300 ease-in-out",
+      isFormOpen ? "rotate-45" : "rotate-0"
+    )}
+  />
+</button>
       </div>
 
       {/* Add Deadline Form */}

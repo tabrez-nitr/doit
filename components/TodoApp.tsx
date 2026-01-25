@@ -6,30 +6,33 @@ import { TaskForm, TaskFormHandle } from "./TaskForm";
 import { TaskItem } from "./TaskItem";
 import { Analytics } from "./Analytics";
 import { DeadlineSection } from "./DeadlineSection";
-import { SplashScreen } from "./SplashScreen";
+
 import { useTodos } from "@/hooks/useTodos";
 import { useLocalNotifications } from "@/hooks/useLocalNotifications"; // [NEW]
 import { Priority, Todo } from "@/types/todo";
 import { Plus } from "lucide-react";
 import { useSwipeable } from "react-swipeable";
 import { motion, AnimatePresence } from "framer-motion";
+import { BottomNav } from "./BottomNav";
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
+// ... existing code ...
+
 
 const variants = {
   enter: (direction: number) => ({
-    x: direction > 0 ? 100 : -100,
     opacity: 0,
+    scale: 0.96,
   }),
   center: {
     zIndex: 1,
-    x: 0,
     opacity: 1,
+    scale: 1,
   },
   exit: (direction: number) => ({
     zIndex: 0,
-    x: direction < 0 ? 100 : -100,
     opacity: 0,
+    scale: 0.96,
   }),
 };
 
@@ -163,9 +166,7 @@ export function TodoApp() {
 
   return (
     <>
-      <AnimatePresence>
-        {showSplash && <SplashScreen key="splash" />}
-      </AnimatePresence>
+  
 
       <div 
           {...handlers}
@@ -191,8 +192,8 @@ export function TodoApp() {
                 animate="center"
                 exit="exit"
                 transition={{
-                    x: { type: "tween", ease: "easeInOut", duration: 0.2 },
-                    opacity: { duration: 0.2 }
+                    duration: 0.4,
+                    ease: [0.32, 0.72, 0, 1]
                 }}
             >
                 {view === 'analytics' ? (
@@ -245,6 +246,7 @@ export function TodoApp() {
       </main>
 
       {view === 'list' && <TaskForm ref={taskFormRef} onAdd={handleAddTodo} />}
+      <BottomNav currentView={view} onChange={handleViewChange} />
     </div>
     </>
   );
