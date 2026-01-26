@@ -1,6 +1,7 @@
 "use client";
 
 import { Todo } from "@/types/todo";
+import { DailyQuote } from "./DailyQuote";
 import {
   BarChart,
   Bar,
@@ -12,11 +13,10 @@ import {
   PieChart,
   Pie,
 } from "recharts";
-import { Lightbulb, Plus, CalendarClock } from "lucide-react";
+import { Plus, CalendarClock } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { ActivityHeatmap } from "./ActivityHeatmap";
-import { DailyComparison } from "./DailyComparison";
 import { toLocalDateString } from "@/lib/utils";
 
 interface AnalyticsProps {
@@ -58,6 +58,22 @@ export function Analytics({ todos, permission, onRequestPermission }: AnalyticsP
   const highPriority = todos.filter((t) => t.priority === "High").length;
   const mediumPriority = todos.filter((t) => t.priority === "Medium").length;
   const lowPriority = todos.filter((t) => t.priority === "Low").length;
+  
+  // Day Progress Calculation
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+  const msPassed = now.getTime() - startOfDay.getTime();
+  const msInDay = 24 * 60 * 60 * 1000;
+  const dayProgress = Math.min(100, Math.max(0, (msPassed / msInDay) * 100));
+  const dayProgressData = [
+    { name: "Passed", value: dayProgress, color: isDark ? "#fafafa" : "#18181b" },
+    { name: "Remaining", value: 100 - dayProgress, color: isDark ? "#27272a" : "#e4e4e7" }
+  ];
+
+  const monthProgressData = [
+    { name: "Passed", value: monthProgress, color: isDark ? "#fafafa" : "#18181b" },
+    { name: "Remaining", value: 100 - monthProgress, color: isDark ? "#27272a" : "#e4e4e7" }
+  ];
 
   // --- Data Preparation for Graphs ---
 
@@ -89,106 +105,7 @@ export function Analytics({ todos, permission, onRequestPermission }: AnalyticsP
     { name: "Low", value: lowPriority, color: "#3b82f6" }, // blue-500
   ].filter((d) => d.value > 0);
 
-  // --- Suggestions Engine ---
-  const getSuggestions = () => {
-    const suggestions = [];
-
-    if (completionRate < 50 && totalTasks > 0) {
-      suggestions.push(
-        "You have a few pending tasks. Try clearing the quick wins first!"
-      );
-    }
-    if (highPriority > 3) {
-      suggestions.push(
-        "You have a lot of High Priority tasks. Focus on them before adding new ones."
-      );
-    }
-    if (completedTasks > 5) {
-      suggestions.push(
-        "Great momentum! You've completed more than 5 tasks. Keep it up!"
-      );
-    }
-    if (totalTasks === 0) {
-      suggestions.push(
-        "Your list is empty. Start by adding a key goal for today."
-      );
-    }
-
-    // Default encouragement if no specific conditions met
-    if (suggestions.length === 0) {
-      suggestions.push("Steady progress is key. Tackle one task at a time.");
-    }
-
-    return suggestions.slice(0, 2); // Return top 2 suggestions
-  };
-
-  // --- Daily Quote Engine ---
- const quotes = [
-  "Energy and persistence conquer all things. — Benjamin Franklin",
-  "Nothing in this world can take the place of persistence. Talent will not; nothing is more common than unsuccessful men with talent. Persistence and determination alone are omnipotent. — Calvin Coolidge",
-  "The price of success is hard work, dedication to the job at hand, and the determination that whether we win or lose, we have applied the best of ourselves to the task at hand. — Vince Lombardi",
-  "There is no substitute for hard work. — Thomas Edison",
-  "I hated every minute of training, but I said, 'Don't quit. Suffer now and live the rest of your life as a champion.' — Muhammad Ali",
-  "Far and away the best prize that life offers is the chance to work hard at work worth doing. — Theodore Roosevelt",
-  "Perseverance is the hard work you do after you get tired of doing the hard work you already did. — Newt Gingrich",
-  "Hard work beats talent when talent doesn't work hard. — Tim Notke",
-  "The only thing that overcomes hard luck is hard work. — Harry Golden",
-  "There are no shortcuts to any place worth going. — Beverly Sills",
-  "If you are not willing to risk the unusual, you will have to settle for the ordinary. — Jim Rohn",
-  "The biggest risk is not taking any risk... In a world that's changing really quickly, the only strategy that is guaranteed to fail is not taking risks. — Mark Zuckerberg",
-  "Only those who will risk going too far can possibly find out how far one can go. — T.S. Eliot",
-  "Man cannot discover new oceans until he has the courage to lose sight of the shore. — André Gide",
-  "Leap and the net will appear. — John Burroughs",
-  "To win without risk is to triumph without glory. — Pierre Corneille",
-  "Living at risk is jumping off the cliff and building your wings on the way down. — Ray Bradbury",
-  "Don't be too timid and squeamish about your actions. All life is an experiment. The more experiments you make the better. — Ralph Waldo Emerson",
-  "Screw it, let's do it. — Richard Branson",
-  "I knew that if I failed I wouldn't regret that, but I knew the one thing I might regret is not trying. — Jeff Bezos",
-  "If you're offered a seat on a rocket ship, don't ask what seat. Just get on. — Sheryl Sandberg",
-  "Be brave, take risks. Nothing can substitute experience. — Paulo Coelho",
-  "He who is not courageous enough to take risks will accomplish nothing in life. — Muhammad Ali",
-  "Courage is resistance to fear, mastery of fear—not absence of fear. — Mark Twain",
-  "The man who moves a mountain begins by carrying away small stones. — Confucius",
-  "There is one quality which one must possess to win, and that is definiteness of purpose, the knowledge of what one wants, and a burning desire to possess it. — Napoleon Hill, Think and Grow Rich",
-  "If you are of those who believe that hard work and honesty, alone, will bring riches, perish the thought! Riches, when they come in huge quantities, are never the result of hard work! — Napoleon Hill, Think and Grow Rich",
-  "Don't aim at success. The more you aim at it and make it a target, the more you are going to miss it. For success, like happiness, cannot be pursued; it must ensue... as the unintended side-effect of one's personal dedication to a cause greater than oneself. — Viktor E. Frankl, Man's Search for Meaning",
-  "When we are no longer able to change a situation, we are challenged to change ourselves. — Viktor E. Frankl, Man's Search for Meaning",
-  "Everything can be taken from a man but one thing: the last of the human freedoms—to choose one's attitude in any given set of circumstances, to choose one's own way. — Viktor E. Frankl, Man's Search for Meaning",
-  "Your success depends on the risks you take. Your survival depends on the risks you avoid. — James Clear (from his writings and newsletters)",
-  "Every action you take is a vote for the type of person you wish to become. — James Clear, Atomic Habits",
-  "The greatest threat to success is not failure but boredom. We get bored with habits because they stop delighting us. — James Clear, Atomic Habits",
-  "You don't have to be great to start, but you have to start to be great. — Zig Ziglar",
-  "The secret of getting ahead is getting started. — Mark Twain",
-  "I have not failed. I've just found 10,000 ways that won't work. — Thomas Edison",
-  "Success is the sum of small efforts, repeated day in and day out. — Robert Collier",
-  "Discipline is the bridge between goals and accomplishment. — Jim Rohn",
-  "The only way to do great work is to love what you do. — Steve Jobs",
-  "You miss 100% of the shots you don't take. — Wayne Gretzky",
-  "It always seems impossible until it's done. — Nelson Mandela",
-  "The best way out is always through. — Robert Frost",
-  "No man is worth his salt who is not ready at all times to risk his well-being, to risk his body, to risk his life in a great cause. — Theodore Roosevelt",
-  "Courage doesn't always roar. Sometimes courage is the quiet voice at the end of the day saying 'I will try again tomorrow.' — Mary Anne Radmacher",
-  "Adventure is worthwhile. — Aesop",
-  "A ship in harbor is safe, but that is not what ships are built for. — John A. Shedd",
-  "Risk more than others think is safe. Dream more than others think is practical. — Howard Schultz",
-  "If you don't build your dream, someone else will hire you to help build theirs. — Tony Gaskins",
-  "Work like there is someone working 24 hours a day to take it away from you. — Mark Cuban",
-  "Great works are performed not by strength but by perseverance. — Samuel Johnson",
-  "Effort only fully releases its reward after a person refuses to quit. — Napoleon Hill"
  
-  
-  
-];
-
-  const getQuote = () => {
-    const hours = 4;
-    const msPerInterval = hours * 60 * 60 * 1000;
-    const intervalIndex = Math.floor(new Date().getTime() / msPerInterval);
-    return quotes[intervalIndex % quotes.length];
-  };
-
-  const currentQuote = getQuote();
-  const suggestions = getSuggestions();
 
   return (
     <div className="py-6  space-y-6 animate-in fade-in duration-500 pb-32">
@@ -238,8 +155,8 @@ export function Analytics({ todos, permission, onRequestPermission }: AnalyticsP
           </div>
         </div>
 
-        {/* Daily Performance Comparison */}
-        <DailyComparison todos={todos} />
+
+
 
         {/* Month Progress Bar */}
         <div className="bg-card p-6 rounded-xl border border-border shadow-sm">
@@ -257,33 +174,50 @@ export function Analytics({ todos, permission, onRequestPermission }: AnalyticsP
             />
           </div>
         </div>
+
+        {/* Day Progress Ring */}
+        <div className="bg-card p-6 rounded-xl border border-border shadow-sm flex items-center justify-between relative overflow-hidden group">
+             {/* Glow Effect */}
+             <div className="absolute inset-0 bg-[radial-gradient(circle_at_right,var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+             
+             <div className="flex flex-col z-10">
+                 <p className="text-muted-foreground text-sm font-medium">Day Progress</p>
+                 <p className="text-3xl font-bold mt-1 text-foreground">{Math.round(dayProgress)}%</p>
+                 <p className="text-xs text-muted-foreground mt-2 opacity-60">of 24hrs passed</p>
+             </div>
+             
+             <div className="h-24 w-24 relative z-10">
+                <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                        <Pie
+                            data={dayProgressData}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={30}
+                            outerRadius={40}
+                            startAngle={90}
+                            endAngle={-270}
+                            dataKey="value"
+                            stroke="none"
+                        >
+                            {dayProgressData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                        </Pie>
+                    </PieChart>
+                </ResponsiveContainer>
+                {/* Center dot/icon could go here */}
+             </div>
+        </div>
       </div>
 
       {/* Activity Heatmap */}
       <ActivityHeatmap todos={todos} />
 
-      {/* Suggestions Section */}
+      {/* Daily Quote Section */}
       <div className="space-y-3">
-        <h3 className="text-lg font-semibold flex items-center gap-2 text-foreground">
-          <Lightbulb className="text-yellow-400 w-5 h-5" />
-          Suggestions 
-        </h3>
-        
         {/* Daily Quote Card */}
-        <div className="bg-linear-to-br from-zinc-800 to-black p-4 rounded-xl border border-zinc-700/50 shadow-md">
-           <p className="text-zinc-300 italic text-sm">"{currentQuote}"</p>
-        </div>
-
-       
-
-        {suggestions.map((msg, idx) => (
-          <div
-            key={idx}
-            className="bg-muted/50 border border-border p-4 rounded-xl text-muted-foreground text-sm"
-          >
-            {msg}
-          </div>
-        ))}
+        <DailyQuote />
       </div>
 
       {/* Weekly Activity Graph */}
