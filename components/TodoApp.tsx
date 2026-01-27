@@ -174,7 +174,7 @@ export function TodoApp() {
           {...handlers}
           className="min-h-screen bg-background text-foreground flex flex-col font-sans transition-colors duration-300 touch-pan-y overflow-hidden"
       >
-      {view !== 'finance' && (
+      {view !== 'finance' && view !== 'deadlines' && (
       <Header 
         currentDate={currentDate} 
         onPrev={handlePrevDay} 
