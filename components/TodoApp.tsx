@@ -186,7 +186,7 @@ export function TodoApp() {
       />
       )}
 
-      <main className="flex-1 p-6 pb-32 overflow-y-auto overflow-x-hidden">
+      <main className={cn("flex-1 p-4 pb-32 overflow-y-auto overflow-x-hidden", view === 'deadlines' ? "px-4 pt-0" : "p-6")}>
         <AnimatePresence initial={false} custom={direction} mode="wait">
             <motion.div
                 key={view}

@@ -240,8 +240,8 @@ export function DeadlineSection({ todos, onAdd, onToggle, onDelete, onUpdate }: 
     <div className="pb-32  animate-in">
       
       {/* Top Bar with Tabs - Occupying Header Space */}
-      <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-md pt-[calc(env(safe-area-inset-top)+1rem)] pb-2 px-4 flex items-center justify-between gap-4">
-          <div className="flex p-1 bg-secondary/50 rounded-xl w-full max-w-sm mx-auto">
+      <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-md pt-[calc(env(safe-area-inset-top)+1rem)] pb-1 flex items-center justify-between">
+          <div className="flex p-1 bg-secondary/50 rounded-xl w-full">
               <button
                   onClick={() => setActiveTab('current')}
                   className={cn(
@@ -251,7 +251,7 @@ export function DeadlineSection({ todos, onAdd, onToggle, onDelete, onUpdate }: 
                           : "text-muted-foreground hover:text-foreground"
                   )}
               >
-                  Current
+                  Pending
               </button>
               <button
                   onClick={() => setActiveTab('completed')}
@@ -267,7 +267,7 @@ export function DeadlineSection({ todos, onAdd, onToggle, onDelete, onUpdate }: 
           </div>
       </div>
       
-      <div className="px-4">
+      <div className="">
       <div className="flex items-center justify-between mb-2">
        
         <button
@@ -289,7 +289,7 @@ export function DeadlineSection({ todos, onAdd, onToggle, onDelete, onUpdate }: 
 
       {/* Add Deadline Form */}
       {isFormOpen && (
-        <form onSubmit={handleSubmit} className="bg-card border border-border p-4 rounded-xl space-y-4 animate-in slide-in-from-top-2 relative z-20 shadow-lg">
+        <form onSubmit={handleSubmit} className="bg-card border border-border py-4  rounded-xl space-y-4 animate-in slide-in-from-top-2 relative z-20 shadow-lg">
           <div>
             <label className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1 block">Task</label>
             <input
