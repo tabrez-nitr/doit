@@ -74,11 +74,11 @@ export function GoalSetting({ isOpen, onClose }: GoalSettingProps) {
 
           {/* Drawer */}
           <motion.div
-            initial={{ y: "-100%" }}
+            initial={{ y: "100%" }}
             animate={{ y: "0%" }}
-            exit={{ y: "-100%" }}
+            exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-xl rounded-b-[2.5rem] shadow-2xl overflow-hidden border-b border-white/10"
+            className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-xl rounded-t-[2.5rem] shadow-2xl overflow-hidden border-t border-white/10"
             style={{ maxHeight: "85vh" }}
           >
             <div className="p-6 pb-8 space-y-6 max-w-xl mx-auto">

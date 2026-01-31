@@ -102,18 +102,22 @@ export function TodoApp() {
 
         handleSwipe('right');
       },
-      onSwipedDown: (eventData) => {
-          // If we are at the top of the page (roughly), triggers goals
-          // But practically, "slide from top" usually means anywhere if not scrolling up
-          // We can check scroll position if needed, but for now simple swipe down trigger:
+      onSwipedUp: (eventData) => {
+          // If we are at the bottom of the page (roughly), triggers goals
           // Check if we are not scrolling inner content
           const target = eventData.event.target as HTMLElement;
-          if (target.closest('.overflow-y-auto') && (target.closest('.overflow-y-auto') as HTMLElement).scrollTop > 0) return;
+          const scrollContainer = target.closest('.overflow-y-auto') as HTMLElement;
+          
+          if (scrollContainer) {
+            const isAtBottom = Math.abs(scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight) < 2;
+            if (!isAtBottom) return;
+          }
           
           setShowGoals(true);
       },
       preventScrollOnSwipe: false,
-      trackMouse: true
+      trackMouse: true,
+      delta: 50
   });
 
   const handlePrevDay = () => {
