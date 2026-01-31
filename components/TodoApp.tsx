@@ -103,6 +103,16 @@ export function TodoApp() {
         handleSwipe('right');
       },
       onSwipedUp: (eventData) => {
+          // 1. Initial Position Check: Must start from the bottom (e.g., bottom 100px)
+          const startY = eventData.initial[1];
+          const windowHeight = window.innerHeight;
+          const triggerZone = 100; // pixels from bottom
+          
+          if (startY < windowHeight - triggerZone) {
+             return; // Ignore swipes starting above the bottom zone
+          }
+
+          // 2. Scroll Position Check (Secondary safety)
           // If we are at the bottom of the page (roughly), triggers goals
           // Check if we are not scrolling inner content
           const target = eventData.event.target as HTMLElement;
