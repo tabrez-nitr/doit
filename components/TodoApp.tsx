@@ -16,6 +16,7 @@ import { Plus } from "lucide-react";
 import { useSwipeable } from "react-swipeable";
 import { motion, AnimatePresence } from "framer-motion";
 import { BottomNav } from "./BottomNav";
+import { GoalSetting } from "./GoalSetting";
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
 // ... existing code ...
@@ -43,6 +44,7 @@ export function TodoApp() {
   const [view, setView] = useState<'list' | 'analytics' | 'deadlines' | 'finance'>('list');
   const [direction, setDirection] = useState(0);
   const [showSplash, setShowSplash] = useState(true);
+  const [showGoals, setShowGoals] = useState(false);
   const { todos, addTodo, toggleTodo, deleteTodo, editTodo, updatePriority, updateTodo, isLoaded } = useTodos();
   const { permission, requestPermission } = useLocalNotifications(todos); // [NEW]
   const taskFormRef = useRef<TaskFormHandle>(null);
@@ -99,6 +101,16 @@ export function TodoApp() {
         if (target.closest('.task-card')) return;
 
         handleSwipe('right');
+      },
+      onSwipedDown: (eventData) => {
+          // If we are at the top of the page (roughly), triggers goals
+          // But practically, "slide from top" usually means anywhere if not scrolling up
+          // We can check scroll position if needed, but for now simple swipe down trigger:
+          // Check if we are not scrolling inner content
+          const target = eventData.event.target as HTMLElement;
+          if (target.closest('.overflow-y-auto') && (target.closest('.overflow-y-auto') as HTMLElement).scrollTop > 0) return;
+          
+          setShowGoals(true);
       },
       preventScrollOnSwipe: false,
       trackMouse: true
@@ -253,6 +265,17 @@ export function TodoApp() {
 
       {view === 'list' && <TaskForm ref={taskFormRef} onAdd={handleAddTodo} />}
       <BottomNav currentView={view} onChange={handleViewChange} />
+      <GoalSetting isOpen={showGoals} onClose={() => setShowGoals(false)} />
+      
+      {/* Test Mode Button */}
+      {process.env.NODE_ENV === 'development' && (
+        <button
+          onClick={() => setShowGoals(true)}
+          className="fixed top-4 right-4 z-50 bg-red-500 text-white text-xs px-2 py-1 rounded shadow-lg opacity-50 hover:opacity-100"
+        >
+          Test Goals
+        </button>
+      )}
     </div>
     </>
   );

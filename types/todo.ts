@@ -8,3 +8,10 @@ export interface Todo {
   deadline?: string; // YYYY-MM-DD
   completed: boolean;
 }
+
+export interface Goal {
+  id: string;
+  text: string;
+  completed: boolean;
+  createdAt: string;
+}
